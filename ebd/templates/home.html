@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+    <title>Pedidos Licão EBD - IEADPE - Pesqueira</title>
+    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+{% block nave %}
+<body>
+    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+        <h3 style="margin: 0; display: flex; gap: 90px;">
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('home') }}">INICIO</a>
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('login') }}">LOGIN</a>
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('cadastro') }}">CADASTRE-SE</a>
+        </h3>
+      </nav>
+      {% endblock %} 
+      {% block body %}
+    <h1>Pedidos Licão EBD - IEADPE - Pesqueira</h1>
+    
+
+    <div class="container">
+        {% for produto in produtos %}
+        <div class="card">
+            <img src="{{ produto.imagem }}" alt="{{ produto.nome }}">
+            <h3>{{ produto.nome }}</h3>
+            <p class="preco">R$ {{ "%.2f"|format(produto.preco) }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
+</body>
+
+</html>

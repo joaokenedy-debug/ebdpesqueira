@@ -1,0 +1,54 @@
+{% extends "home.html"  %}
+   
+    {% block title %}
+    <title>Carrinho</title>
+    {% endblock %}
+
+    
+    {% block nave %}
+<body>
+    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+        <h3 style="margin: 0; display: flex; gap: 90px;">
+            {% if current_user.is_admin %}
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">INICIO</a>
+          {% else %}
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('perfil', id_usuario=current_user.id) }}">INICIO</a>
+          {% endif %} </h3>
+      </nav>
+      {% endblock %} 
+      {% block body %}
+    <h1>Seu Carrinho</h1>
+    {% if current_user.is_admin %}
+    <a href="{{ url_for('adm', id_usuario=current_user.id) }}">⬅ Voltar para loja</a>
+    {% else %}
+    <a href="{{ url_for('perfil', id_usuario=current_user.id) }}">⬅ Voltar para loja</a>
+    {% endif %}
+
+    {% if itens %}
+        <table>
+            <tr>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Subtotal</th>
+            </tr>
+            {% for item in itens %}
+            <tr>
+                <td>{{ item.nome }}</td>
+                <td>{{ item.quantidade }}</td>
+                <td>R$ {{ "%.2f"|format(item.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <h3>Total: R$ {{ "%.2f"|format(total) }}</h3>
+
+        <!-- Botão para gerar Excel -->
+        <form action="{{ url_for('finalizar') }}" method="POST">
+            <button type="submit">Finalizar</button>
+        </form>
+        {% else %}
+        <p>Seu carrinho está vazio.</p>
+    {% endif %}
+
+
+{% endblock %}
+</body>

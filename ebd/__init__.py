@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://bd_ebdpesqueira_user:eLL46eLsSNGRy9Yas5VIZpouEJYhkLNM@dpg-d3ftvjali9vc73emu3jg-a/bd_ebdpesqueira"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SECRET_KEY"] = "193c5a16"
 app.config["UPLOAD_FOLDER"] = "static/pedidos"
@@ -24,5 +24,6 @@ with app.app_context():
 
 # Importa as rotas após inicializar o banco
 from ebd import routes
+
 
 

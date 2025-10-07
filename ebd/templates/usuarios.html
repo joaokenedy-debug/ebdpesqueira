@@ -25,25 +25,32 @@
         }
         button {
             padding: 5px 10px;
-            background-color: #28a745;
             border: none;
             color: white;
             cursor: pointer;
             border-radius: 4px;
         }
-        button:hover {
+        .btn-admin {
+            background-color: #28a745;
+        }
+        .btn-admin:hover {
             background-color: #218838;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+        }
+        .btn-delete:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
 <body>
     <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
-        
         <h3 style="margin: 0; display: flex; gap: 100px;">
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Fazer Pedido</a>
-          
+            <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Fazer Pedido</a>
         </h3>
-      </nav>
+    </nav>
+
     <h1>Lista de Usuários</h1>
     <table>
         <thead>
@@ -53,7 +60,7 @@
                 <th>Email</th>
                 <th>Congregação</th>
                 <th>Administrador</th>
-                <th>Ação</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -64,14 +71,15 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.congregacao }}</td>
                 <td>{{ "Sim" if user.is_admin else "Não" }}</td>
-                <td>
+                <td style="display: flex; gap: 8px; justify-content: center;">
                     {% if not user.is_admin %}
                     <form method="POST" action="{{ url_for('tornar_admin', user_id=user.id) }}">
-                        <button type="submit">Tornar Admin</button>
+                        <button type="submit" class="btn-admin">Tornar Admin</button>
                     </form>
-                    {% else %}
-                    -
                     {% endif %}
+                    <form method="POST" action="{{ url_for('deletar_usuario', user_id=user.id) }}">
+                        <button type="submit" class="btn-delete" onclick="return confirm('Tem certeza que deseja excluir este usuário?')">Excluir</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

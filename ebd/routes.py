@@ -362,4 +362,23 @@ def meuspedidos():
 
     return render_template("meuspedidos.html", arquivos=arquivos)
 
+@app.route("/deletar_usuario/<int:user_id>", methods=["POST"])
+@login_required
+def deletar_usuario(user_id):
+    from ebd.models import Usuario  # importe seu model corretamente
+
+    usuario = Usuario.query.get(user_id)
+    if usuario:
+        # Evita excluir a si mesmo
+        if usuario.id == current_user.id:
+            flash("Você não pode excluir a si mesmo.", "warning")
+            return redirect(url_for("lista_usuarios"))
+        database.session.delete(usuario)
+        database.session.commit()
+        flash("Usuário excluído com sucesso!", "success")
+    else:
+        flash("Usuário não encontrado.", "danger")
+    
+    return redirect(url_for("lista_usuarios"))
+
 

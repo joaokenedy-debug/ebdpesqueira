@@ -211,8 +211,8 @@ def cadastro ():
                 usuario = Usuario(usarname=formcriarconta.username.data,
                                    senha=senha, 
                                    congregacao=formcriarconta.congregacao.data,
-                                  email=formcriarconta.email.data,
-                                  is_admin=True)
+                                  email=formcriarconta.email.data
+                                  )
                 database.session.add(usuario)
                 database.session.commit()
                 login_user(usuario, remember=True)
@@ -380,5 +380,6 @@ def deletar_usuario(user_id):
         flash("Usuário não encontrado.", "danger")
     
     return redirect(url_for("lista_usuarios"))
+
 
 

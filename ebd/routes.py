@@ -207,7 +207,7 @@ def finalizar():
 def cadastro ():
         formcriarconta = FormCriarConta()
         if formcriarconta.validate_on_submit():
-                senha = bcrypt.generate_password_hash(formcriarconta.senha.data)
+                senha = bcrypt.generate_password_hash(formcriarconta.senha.data).decode('utf-8')
                 usuario = Usuario(usarname=formcriarconta.username.data,
                                    senha=senha, 
                                    congregacao=formcriarconta.congregacao.data,
@@ -357,5 +357,6 @@ def meuspedidos():
 
     # Ordenar por data mais recente
     arquivos.sort(key=lambda x: x["data"], reverse=True)
+
 
     return render_template("meuspedidos.html", arquivos=arquivos)

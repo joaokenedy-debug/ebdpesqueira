@@ -211,7 +211,8 @@ def cadastro ():
                 usuario = Usuario(usarname=formcriarconta.username.data,
                                    senha=senha, 
                                    congregacao=formcriarconta.congregacao.data,
-                                  email=formcriarconta.email.data)
+                                  email=formcriarconta.email.data,
+                                  admin=True)
                 database.session.add(usuario)
                 database.session.commit()
                 login_user(usuario, remember=True)
@@ -360,3 +361,4 @@ def meuspedidos():
 
 
     return render_template("meuspedidos.html", arquivos=arquivos)
+

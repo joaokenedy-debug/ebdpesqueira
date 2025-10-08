@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar PDFs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .acoes {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-download {
+            background: #28a745;
+            color: white;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+        <h3 style="margin: 0; display: flex; gap: 100px;">
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Painel</a>
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
+        </h3>
+    </nav>
+
+```
+<h1>Gerenciar Arquivos PDF</h1>
+
+<div class="container">
+    {% if arquivos %}
+    <table>
+        <thead>
+            <tr>
+                <th>Arquivo</th>
+                <th>Tamanho</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for arq in arquivos %}
+            <tr>
+                <td>{{ arq.nome }}</td>
+                <td>{{ arq.tamanho }} KB</td>
+                <td class="acoes">
+                    <a class="btn btn-download" href="{{ url_for('download_pdf', filename=arq.nome) }}">Baixar</a>
+                    <form method="POST" action="{{ url_for('delete_pdf', filename=arq.nome) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-delete" onclick="return confirm('Deseja excluir este PDF?')">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nenhum arquivo PDF encontrado.</p>
+    {% endif %}
+</div>
+```
+
+</body>
+</html>

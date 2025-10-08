@@ -365,7 +365,7 @@ def meuspedidos():
 @app.route("/deletar_usuario/<int:user_id>", methods=["POST"])
 @login_required
 def deletar_usuario(user_id):
-    from ebd.models import Usuario  # importe seu model corretamente
+    
 
     usuario = Usuario.query.get(user_id)
     if usuario:
@@ -380,6 +380,7 @@ def deletar_usuario(user_id):
         flash("Usuário não encontrado.", "danger")
     
     return redirect(url_for("lista_usuarios"))
+
 
 
 

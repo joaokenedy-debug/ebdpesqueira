@@ -16,8 +16,3 @@ class Usuario(database.Model, UserMixin):
     fotos = database.relationship("Foto", backref="usuario", lazy=True, uselist=True)
     is_admin = database.Column(database.Boolean, default=False) 
 
-class Foto(database.Model):
-    id = database.Column(database.Integer , primary_key = True)
-    imagem = database.Column(database.String, default = "default.png")
-    data_criacao = database.Column(database.DateTime, default=datetime.utcnow, nullable=False )
-    id_usuario = database.Column(database.Integer, database.ForeignKey('usuario.id') ,nullable=False)

@@ -22,6 +22,8 @@ app.secret_key = "123a41bc23"  # Necessário para usar session
 df = pd.read_excel("ebd/static/lista de revistas.xlsx") 
 produtos = df.to_dict(orient="records")
 #print (produtos)
+PDF_FOLDER = os.path.join(app.root_path, 'static', 'pdf')
+
 
 @app.route("/")
 def home():
@@ -391,9 +393,10 @@ def gerenciar_pdfs():
             arquivos.append({'nome': nome_arquivo, 'tamanho': tamanho_kb})
     return render_template('gerenciar_pdfs.html', arquivos=arquivos)
 
-@app.route('/download_pdf/path:filename')
+@app.route('/download_pdf/<path:filename>')
 def download_pdf(filename):
     return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
+
 
 
 

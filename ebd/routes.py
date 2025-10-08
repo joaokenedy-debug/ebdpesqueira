@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, session, request,  send_file, flash,send_from_directory
 from ebd import app, database, bcrypt
-from ebd.models import Usuario, Foto
+from ebd.models import Usuario
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta, FormFoto
 import os
@@ -396,6 +396,7 @@ def gerenciar_pdfs():
 @app.route('/download_pdf/<path:filename>')
 def download_pdf(filename):
     return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
+
 
 
 

@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, FileField
 from flask_wtf.file import FileRequired, FileAllowed
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
-from ebd.models import Usuario, Foto
+from ebd.models import Usuario
 
 
 class FormLogin(FlaskForm):
@@ -29,4 +29,5 @@ class FormFoto(FlaskForm):
     foto= FileField("Foto", validators=[DataRequired(), 
                                         FileRequired(),
         FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Apenas imagens são permitidas!')])
+
     botao_enviar=SubmitField("Enviar Fotos")        

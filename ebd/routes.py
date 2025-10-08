@@ -380,6 +380,20 @@ def deletar_usuario(user_id):
         flash("Usuário não encontrado.", "danger")
     
     return redirect(url_for("lista_usuarios"))
+    
+@app.route('/gerenciar_pdfs')
+def gerenciar_pdfs():
+    arquivos = []
+    for nome_arquivo in os.listdir(PDF_FOLDER):
+    if nome_arquivo.lower().endswith('.pdf'):
+    caminho = os.path.join(PDF_FOLDER, nome_arquivo)
+    tamanho_kb = round(os.path.getsize(caminho) / 1024, 2)
+    arquivos.append({'nome': nome_arquivo, 'tamanho': tamanho_kb})
+    return render_template('gerenciar_pdfs.html', arquivos=arquivos)
+
+@app.route('/download_pdf/path:filename')
+def download_pdf(filename):
+    return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
 
 
 

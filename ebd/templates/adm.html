@@ -14,10 +14,13 @@
         <h3 style="margin: 0; display: flex; gap: 100px;">
           
           
-           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('meus_pedidos') }}">Gerenciar pedidos</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('gerenciar_pdfs') }}">Apoio ao professor</a>
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('painel_banco') }}">Banco de Dados</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('listar_usuarios') }}">cadastros</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
+          {% if current_user.is_authenticated and current_user.is_admin %}
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('todos_pedidos') }}">Pedidos</a>
+            {% endif %}
+
         </h3>
       </nav>
       {% endblock %} 
@@ -45,6 +48,7 @@
 </body>
 
 </html>
+
 
 
 

@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, session, request,  send_file, flash,send_from_directory
 from ebd import app, database, bcrypt
-from ebd.models import Usuario
+from ebd.models import Usuario, Pedido, ItemPedido
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta
 import os
@@ -64,6 +64,7 @@ def ver_carrinho():
 
     return render_template("carrinho.html", itens=itens, total=total)
 @app.route("/finalizar", methods=["POST"])
+@login_required
 def finalizar():
     carrinho = session.get("carrinho", {})
     if not carrinho:
@@ -78,15 +79,36 @@ def finalizar():
             subtotal = produto["preco"] * qtd
             total += subtotal
             itens_excel.append({
-                 # <-- Adicionei o ID aqui
                 "Produto": produto["nome"],
-                "ID": produto["id"], 
+                "ID": produto["id"],
                 "Quantidade": qtd,
                 "Preço Unitário": produto["preco"],
                 "Subtotal": subtotal
             })
 
-    # Gerar PDF
+    # --- SALVAR NO BANCO ---
+    novo_pedido = Pedido(
+        id_usuario=current_user.id,
+        congregacao=current_user.congregacao,
+        total=total
+    )
+    database.session.add(novo_pedido)
+    database.session.flush()  # garante o id_pedido disponível
+
+    for item in itens_excel:
+        item_db = ItemPedido(
+            id_pedido=novo_pedido.id,
+            produto=item["Produto"],
+            codigo=item["ID"],
+            quantidade=item["Quantidade"],
+            preco_unitario=item["Preço Unitário"],
+            subtotal=item["Subtotal"]
+        )
+        database.session.add(item_db)
+
+    database.session.commit()
+
+    # --- GERA PDF (mantém igual) ---
     pdf_output = BytesIO()
     doc = SimpleDocTemplate(pdf_output, pagesize=A4)
     elements = []
@@ -102,10 +124,8 @@ def finalizar():
             f'R$ {item["Preço Unitário"]:.2f}',
             f'R$ {item["Subtotal"]:.2f}'
         ])
-    
-    # Linha de total
-    table_data.append(["TOTAL", "", "", f'R$ {total:.2f}'])
 
+    table_data.append(["TOTAL", "", "", f'R$ {total:.2f}'])
     t = Table(table_data)
     t.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.gray),
@@ -113,94 +133,26 @@ def finalizar():
         ('GRID', (0,0), (-1,-1), 1, colors.black),
         ('ALIGN',(1,1),(-1,-1),'CENTER')
     ]))
-    timestamp = datetime.now().strftime("%d-%m-%Y    %H:%M:%S")
+
     elements.append(t)
     elements.append(Spacer(1, 24))
-    elements.append(
-    Paragraph(
-        f"Pedido da EBD Congregação - {current_user.congregacao.upper()} - Feito!- {timestamp}",
-        style["Title"] ))
-    elements.append(Spacer(1, 24))
-    Paragraph(
-        f"{timestamp}" )
-    elements.append(Spacer(1, 24))
-    elements.append(
-    Paragraph(
-        f"Autor do pedido {current_user.usarname.upper()} ",
-        style["Title"] ))
+    elements.append(Paragraph(
+        f"Pedido da EBD - {current_user.congregacao.upper()} - {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}",
+        style["Title"]
+    ))
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph(f"Usuário: {current_user.usarname.upper()}", style["Title"]))
 
     doc.build(elements)
     pdf_output.seek(0)
-     # --- SALVAR PDF NA PASTA STATIC/PEDIDOS ---
-    pedidos_dir = os.path.join("ebd","static", "pedidos")
-    os.makedirs(pedidos_dir, exist_ok=True)
 
-    # Nome do arquivo: congregacao_usuario_data.pdf
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"pedido_{current_user.congregacao}_{current_user.usarname}_{timestamp}.pdf"
-    file_path = os.path.join(pedidos_dir, filename)
-
-    with open(file_path, "wb") as f:
-        f.write(pdf_output.getbuffer())
-     # --- ATUALIZAR EXCEL CONSOLIDADO ---
-    excel_base_path = os.path.join("ebd", "static", "lista de revistas2.xlsx")
-    excel_pedidos_path = os.path.join(pedidos_dir, "pedidos_consolidados.xlsx")
-
-    # Função para ler Excel com fallback caso o arquivo não exista
-    def ler_excel_seguro(caminho, colunas_padrao=None):
-        try:
-            return pd.read_excel(caminho)
-        except FileNotFoundError:
-            # Cria DataFrame vazio com colunas padrão
-            if colunas_padrao:
-                return pd.DataFrame(columns=colunas_padrao)
-            return pd.DataFrame()
-
-    # Colunas padrão do seu Excel
-    colunas = ["Congregação", "Usuário", "Produto", "CODIGO", "Quantidade", "Preço Unitário", "Bruto"]
-
-    # Ler arquivo existente ou base
-    if os.path.exists(excel_pedidos_path):
-        df = ler_excel_seguro(excel_pedidos_path, colunas)
-    else:
-        df = ler_excel_seguro(excel_base_path, colunas)
-
-    # Preparar novos pedidos em lista de dicionários
-    novos_pedidos = [{
-        "Congregação": current_user.congregacao,
-        "Usuário": current_user.usarname,  
-        "Produto": item["Produto"],
-        "CODIGO": item["ID"],  
-        "Quantidade": item["Quantidade"],
-        "Preço Unitário": item["Preço Unitário"],
-        "Bruto": item["Subtotal"],
-    } for item in itens_excel]
-
-    # Adicionar novos pedidos de uma vez
-    if novos_pedidos:
-        df = pd.concat([df, pd.DataFrame(novos_pedidos)], ignore_index=True)
-
-    # Consolidar resultados
-    resultado = df.groupby(["CODIGO", "Produto"], as_index=False).agg({
-        "Quantidade": "sum",
-        "Bruto": "sum"
-    })
-    resultado["Liquido"] = resultado["Bruto"] * 0.7
-
-    # Reordenar colunas
-    resultado = resultado[["Produto", "CODIGO", "Quantidade", "Bruto", "Liquido"]]
-
-    # Salvar Excel atualizado
-    resultado.to_excel(excel_pedidos_path, index=False)
-
-    
-    
-
+    # Limpa carrinho
     session["carrinho"] = {}
 
+    # Envia PDF para download
     return send_file(
         pdf_output,
-        download_name="carrinho.pdf",
+        download_name=f"pedido_{novo_pedido.id}.pdf",
         as_attachment=True,
         mimetype="application/pdf"
     )
@@ -396,6 +348,7 @@ def gerenciar_pdfs():
 @app.route('/download_pdf/<path:filename>')
 def download_pdf(filename):
     return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
+
 
 
 

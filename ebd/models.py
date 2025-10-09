@@ -13,6 +13,6 @@ class Usuario(database.Model, UserMixin):
     email = database.Column(database.String, nullable=False)
     congregacao = database.Column(database.String, nullable=False)
     senha = database.Column(database.String, nullable=False)
-    fotos = database.relationship("Foto", backref="usuario", lazy=True, uselist=True)
     is_admin = database.Column(database.Boolean, default=False) 
+
 

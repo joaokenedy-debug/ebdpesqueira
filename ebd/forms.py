@@ -25,9 +25,4 @@ class FormCriarConta(FlaskForm):
         if usuario :
            return ValidationError ("E-mail já cadastrado")
 
-class FormFoto(FlaskForm):
-    foto= FileField("Foto", validators=[DataRequired(), 
-                                        FileRequired(),
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif'], 'Apenas imagens são permitidas!')])
 
-    botao_enviar=SubmitField("Enviar Fotos")        

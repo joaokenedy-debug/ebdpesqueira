@@ -24,6 +24,7 @@ class Pedido(database.Model):
     total = database.Column(database.Float, nullable=False)
 
     itens = database.relationship("ItemPedido", backref="pedido", cascade="all, delete-orphan", lazy=True)
+    usuario = database.relationship("Usuario", backref="pedidos")
 
 class ItemPedido(database.Model):
     __tablename__ = "item_pedido"
@@ -34,4 +35,5 @@ class ItemPedido(database.Model):
     quantidade = database.Column(database.Integer, nullable=False)
     preco_unitario = database.Column(database.Float, nullable=False)
     subtotal = database.Column(database.Float, nullable=False)
+
 

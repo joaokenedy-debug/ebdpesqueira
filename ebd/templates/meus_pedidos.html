@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "home.html" %}
 {% block content %}
 <h2>Meus Pedidos</h2>
 <table border="1">
@@ -26,3 +26,4 @@
 
 <a href="{{ url_for('exportar_pedidos_excel') }}">Exportar para Excel</a>
 {% endblock %}
+

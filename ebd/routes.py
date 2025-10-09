@@ -350,9 +350,37 @@ def download_pdf(filename):
     return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
 
 
+@app.route("/meus_pedidos")
+@login_required
+def meus_pedidos():
+    pedidos = Pedido.query.filter_by(id_usuario=current_user.id).order_by(Pedido.data.desc()).all()
+    return render_template("meus_pedidos.html", pedidos=pedidos)
 
 
+@app.route("/exportar_pedidos_excel")
+@login_required
+def exportar_pedidos_excel():
+    pedidos = Pedido.query.filter_by(id_usuario=current_user.id).all()
 
+    dados = []
+    for pedido in pedidos:
+        for item in pedido.itens:
+            dados.append({
+                "ID Pedido": pedido.id,
+                "Data": pedido.data.strftime("%d/%m/%Y %H:%M"),
+                "Produto": item.produto,
+                "Código": item.codigo,
+                "Quantidade": item.quantidade,
+                "Preço Unitário": item.preco_unitario,
+                "Subtotal": item.subtotal,
+                "Total Pedido": pedido.total,
+            })
+
+    df = pd.DataFrame(dados)
+    output = BytesIO()
+    df.to_excel(output, index=False)
+    output.seek(0)
+    return send_file(output, as_attachment=True, download_name="meus_pedidos.xlsx")
 
 
 

@@ -4,7 +4,7 @@ from ebd.models import Usuario, Pedido, ItemPedido
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta
 import os
-from datetime import datetime
+from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
 import pandas as pd
 from io import BytesIO
@@ -63,6 +63,8 @@ def ver_carrinho():
             itens.append({"nome": produto["nome"], "quantidade": qtd, "subtotal": subtotal})
 
     return render_template("carrinho.html", itens=itens, total=total)
+from datetime import datetime, timedelta
+
 @app.route("/finalizar", methods=["POST"])
 @login_required
 def finalizar():
@@ -108,7 +110,7 @@ def finalizar():
 
     database.session.commit()
 
-    # --- GERA PDF (mantém igual) ---
+    # --- GERA PDF ---
     pdf_output = BytesIO()
     doc = SimpleDocTemplate(pdf_output, pagesize=A4)
     elements = []
@@ -136,8 +138,12 @@ def finalizar():
 
     elements.append(t)
     elements.append(Spacer(1, 24))
+
+    # Ajuste de horário para Brasília (-3h UTC)
+    agora_brasilia = datetime.now() - timedelta(hours=3)
+
     elements.append(Paragraph(
-        f"Pedido da EBD - {current_user.congregacao.upper()} - {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}",
+        f"Pedido da EBD - {current_user.congregacao.upper()} - {agora_brasilia.strftime('%d/%m/%Y %H:%M:%S')}",
         style["Title"]
     ))
     elements.append(Spacer(1, 12))
@@ -156,6 +162,7 @@ def finalizar():
         as_attachment=True,
         mimetype="application/pdf"
     )
+
     
 @app.route("/cadastro", methods = ["GET", "POST"])
 def cadastro ():
@@ -239,7 +246,19 @@ def adm (id_usuario):
 
 
 
+@app.route("/todos_pedidos")
+@login_required
+def todos_pedidos():
+    if not current_user.is_admin:
+        return "Acesso negado", 403
 
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
+
+    # Ajusta para horário de Brasília
+    for pedido in pedidos:
+        pedido.data = pedido.data - timedelta(hours=3)
+
+    return render_template("todos_pedidos.html", pedidos=pedidos)
 @app.route("/gerenciar_pedidos")
 @login_required
 def gerenciar_pedidos():
@@ -316,24 +335,7 @@ def meuspedidos():
 
     return render_template("meuspedidos.html", arquivos=arquivos)
 
-@app.route("/deletar_usuario/<int:user_id>", methods=["POST"])
-@login_required
-def deletar_usuario(user_id):
-    
 
-    usuario = Usuario.query.get(user_id)
-    if usuario:
-        # Evita excluir a si mesmo
-        if usuario.id == current_user.id:
-            flash("Você não pode excluir a si mesmo.", "warning")
-            return redirect(url_for("lista_usuarios"))
-        database.session.delete(usuario)
-        database.session.commit()
-        flash("Usuário excluído com sucesso!", "success")
-    else:
-        flash("Usuário não encontrado.", "danger")
-    
-    return redirect(url_for("lista_usuarios"))
     
 @app.route('/gerenciar_pdfs')
 def gerenciar_pdfs():
@@ -343,7 +345,6 @@ def gerenciar_pdfs():
             caminho = os.path.join(PDF_FOLDER, nome_arquivo)
             tamanho_kb = round(os.path.getsize(caminho) / 1024, 2)
             arquivos.append({'nome': nome_arquivo, 'tamanho': tamanho_kb})
-    arquivos = sorted(arquivos, key=lambda a: a['nome'].lower())        
     return render_template('gerenciar_pdfs.html', arquivos=arquivos)
 
 @app.route('/download_pdf/<path:filename>')
@@ -361,7 +362,7 @@ def meus_pedidos():
 @app.route("/exportar_pedidos_excel")
 @login_required
 def exportar_pedidos_excel():
-    pedidos = Pedido.query.filter_by(id_usuario=current_user.id).all()
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
 
     dados = []
     for pedido in pedidos:
@@ -369,6 +370,8 @@ def exportar_pedidos_excel():
             dados.append({
                 "ID Pedido": pedido.id,
                 "Data": pedido.data.strftime("%d/%m/%Y %H:%M"),
+                "Usuário": pedido.usuario.usarname,
+                "Congregação": pedido.congregacao,
                 "Produto": item.produto,
                 "Código": item.codigo,
                 "Quantidade": item.quantidade,
@@ -378,24 +381,131 @@ def exportar_pedidos_excel():
             })
 
     df = pd.DataFrame(dados)
+
+    # Agrupar por Código do produto somando quantidade e subtotal
+    df_agrupado = df.groupby(['Código', 'Produto', 'Usuário', 'Congregação'], as_index=False).agg({
+        'Quantidade':'sum',
+        'Subtotal':'sum',
+        'ID Pedido':'first',
+        'Data':'first',
+        'Preço Unitário':'first',
+        'Total Pedido':'first'
+    })
+
     output = BytesIO()
-    df.to_excel(output, index=False)
+    df_agrupado.to_excel(output, index=False)
     output.seek(0)
-    return send_file(output, as_attachment=True, download_name="meus_pedidos.xlsx")
-    
+    return send_file(output, as_attachment=True, download_name="todos_pedidos.xlsx")
+
+
+
 @app.route('/painel_banco')
 @login_required
 def painel_banco():
-    # Permitir apenas administradores
-    if not getattr(current_user, 'is_admin', False):
+    # Apenas administradores podem acessar
+    if not current_user.is_admin:
         return "Acesso negado", 403
 
-    # Buscar todos os usuários
-    usuarios = Usuario.query.all()
-    return render_template('painel_banco.html', usuarios=usuarios)
+    # Buscar dados
+    usuarios = Usuario.query.order_by(Usuario.usarname).all()
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
+    itens = ItemPedido.query.all()  # para simplificar, traz todos os itens
 
+    return render_template('painel_banco.html',
+                           usuarios=usuarios,
+                           pedidos=pedidos,
+                           itens=itens)
+from flask import redirect, url_for, flash
 
+# Deletar usuário
+@app.route('/deletar_usuario/<int:id_usuario>', methods=['POST'])
+@login_required
+def deletar_usuario(id_usuario):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+    usuario = Usuario.query.get_or_404(id_usuario)
+    database.session.delete(usuario)
+    database.session.commit()
+    flash(f'Usuário {usuario.usarname} deletado com sucesso!', 'success')
+    return redirect(url_for('painel_banco'))
 
+# Deletar pedido
+@app.route('/deletar_pedido/<int:id_pedido>', methods=['POST'])
+@login_required
+def deletar_pedido(id_pedido):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+    pedido = Pedido.query.get_or_404(id_pedido)
+    database.session.delete(pedido)
+    database.session.commit()
+    flash(f'Pedido {pedido.id} deletado com sucesso!', 'success')
+    return redirect(url_for('painel_banco'))
 
+# Deletar item do pedido
+@app.route('/deletar_item/<int:id_item>', methods=['POST'])
+@login_required
+def deletar_item(id_item):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+    item = ItemPedido.query.get_or_404(id_item)
+    database.session.delete(item)
+    database.session.commit()
+    flash(f'Item {item.produto} deletado com sucesso!', 'success')
+    return redirect(url_for('painel_banco'))
 
+@app.route("/imprimir_pedido/<int:id_pedido>")
+@login_required
+def imprimir_pedido(id_pedido):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
 
+    pedido = Pedido.query.get_or_404(id_pedido)
+    itens_excel = []
+    total = pedido.total
+
+    for item in pedido.itens:
+        itens_excel.append({
+            "Produto": item.produto,
+            "Quantidade": item.quantidade,
+            "Preço Unitário": item.preco_unitario,
+            "Subtotal": item.subtotal
+        })
+
+    # --- GERA PDF ---
+    pdf_output = BytesIO()
+    doc = SimpleDocTemplate(pdf_output, pagesize=A4)
+    elements = []
+    style = getSampleStyleSheet()
+    elements.append(Paragraph(f"Pedido ID: {pedido.id}", style['Title']))
+
+    table_data = [["Produto", "Quantidade", "Preço Unitário", "Subtotal"]]
+    for item in itens_excel:
+        table_data.append([
+            item["Produto"],
+            str(item["Quantidade"]),
+            f'R$ {item["Preço Unitário"]:.2f}',
+            f'R$ {item["Subtotal"]:.2f}'
+        ])
+    table_data.append(["TOTAL", "", "", f'R$ {total:.2f}'])
+    t = Table(table_data)
+    t.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.gray),
+        ('TEXTCOLOR',(0,0),(-1,0),colors.whitesmoke),
+        ('GRID', (0,0), (-1,-1), 1, colors.black),
+        ('ALIGN',(1,1),(-1,-1),'CENTER')
+    ]))
+    elements.append(t)
+    elements.append(Spacer(1, 24))
+    elements.append(Paragraph(f"Usuário: {pedido.usuario.usarname.upper()}", style["Title"]))
+    elements.append(Paragraph(f"Congregação: {pedido.congregacao.upper()}", style["Title"]))
+    elements.append(Paragraph(f"Data: {pedido.data.strftime('%d/%m/%Y %H:%M:%S')}", style["Title"]))
+
+    doc.build(elements)
+    pdf_output.seek(0)
+
+    return send_file(
+        pdf_output,
+        download_name=f"pedido_{pedido.id}.pdf",
+        as_attachment=True,
+        mimetype="application/pdf"
+    )

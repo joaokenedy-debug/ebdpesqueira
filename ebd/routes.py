@@ -382,6 +382,17 @@ def exportar_pedidos_excel():
     df.to_excel(output, index=False)
     output.seek(0)
     return send_file(output, as_attachment=True, download_name="meus_pedidos.xlsx")
+    
+@app.route('/painel_banco')
+@login_required
+def painel_banco():
+    # Permitir apenas administradores
+    if not getattr(current_user, 'is_admin', False):
+        return "Acesso negado", 403
+
+    # Buscar todos os usuários
+    usuarios = Usuario.query.all()
+    return render_template('painel_banco.html', usuarios=usuarios)
 
 
 

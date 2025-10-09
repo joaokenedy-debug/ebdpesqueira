@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Todos os Pedidos - Painel Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #143fbb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #143fbb;
+            color: #fff;
+        }
+        ul {
+            padding-left: 0;
+            list-style: none;
+        }
+        a.btn {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #143fbb;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        a.btn:hover {
+            background-color: #0f2c91;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Todos os Pedidos</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID Pedido</th>
+            <th>Usuário</th>
+            <th>Congregação</th>
+            <th>Data</th>
+            <th>Total</th>
+            <th>Itens</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pedido in pedidos %}
+        <tr>
+            <td>{{ pedido.id }}</td>
+            <td>{{ pedido.usuario.usarname }}</td>
+            <td>{{ pedido.congregacao }}</td>
+            <td>{{ pedido.data.strftime("%d/%m/%Y %H:%M") }}</td>
+            <td>R$ {{ "%.2f"|format(pedido.total) }}</td>
+            <td>
+                <ul>
+                    {% for item in pedido.itens %}
+                    <li>{{ item.produto }} ({{ item.quantidade }} x R$ {{ "%.2f"|format(item.preco_unitario) }})</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <a class="btn" href="{{ url_for('imprimir_pedido', id_pedido=pedido.id) }}" target="_blank">Imprimir PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>

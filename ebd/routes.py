@@ -345,6 +345,7 @@ def gerenciar_pdfs():
             caminho = os.path.join(PDF_FOLDER, nome_arquivo)
             tamanho_kb = round(os.path.getsize(caminho) / 1024, 2)
             arquivos.append({'nome': nome_arquivo, 'tamanho': tamanho_kb})
+    arquivos.sort(key=lambda x: x["data"], reverse=True)        
     return render_template('gerenciar_pdfs.html', arquivos=arquivos)
 
 @app.route('/download_pdf/<path:filename>')
@@ -509,3 +510,4 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+

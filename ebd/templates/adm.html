@@ -13,7 +13,7 @@
         
         <h3 style="margin: 0; display: flex; gap: 100px;">
           
-          
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('gerenciar_pdfs') }}">Apoio ao professor</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('painel_banco') }}">Banco de Dados</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
           {% if current_user.is_authenticated and current_user.is_admin %}
@@ -47,6 +47,7 @@
 </body>
 
 </html>
+
 
 
 

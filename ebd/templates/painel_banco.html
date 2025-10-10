@@ -9,19 +9,6 @@
     </style>
 </head>
 <body>
-    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
-        
-        <h3 style="margin: 0; display: flex; gap: 100px;">
-          
-          
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('painel_banco') }}">Banco de Dados</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-          {% if current_user.is_authenticated and current_user.is_admin %}
-            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('todos_pedidos') }}">Pedidos</a>
-            {% endif %}
-
-        </h3>
-      </nav>
 <div class="container mt-4">
     <h2>Painel Administrativo</h2>
 
@@ -35,6 +22,7 @@
                 <th>Email</th>
                 <th>Congregação</th>
                 <th>Admin</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -45,12 +33,21 @@
                 <td>{{ u.email }}</td>
                 <td>{{ u.congregacao }}</td>
                 <td>{{ "Sim" if u.is_admin else "Não" }}</td>
-                <td>
+                <td class="d-flex gap-2">
+
+                    <!-- Botão Tornar Admin (aparece apenas se ainda não for admin) -->
+                    {% if not u.is_admin %}
+                    <form action="{{ url_for('tornar_admin', user_id=u.id) }}" method="post" onsubmit="return confirm('Deseja tornar {{ u.usarname }} um administrador?');">
+                        <button type="submit" class="btn btn-warning btn-sm">Tornar Admin</button>
+                    </form>
+                    {% endif %}
+
+                    <!-- Botão Apagar -->
                     <form action="{{ url_for('deletar_usuario', id_usuario=u.id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja apagar este usuário?');">
                         <button type="submit" class="btn btn-danger btn-sm">Apagar</button>
                     </form>
+
                 </td>
-                
             </tr>
             {% endfor %}
         </tbody>
@@ -66,6 +63,7 @@
                 <th>Congregação</th>
                 <th>Data</th>
                 <th>Total</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -81,7 +79,6 @@
                         <button type="submit" class="btn btn-danger btn-sm">Apagar</button>
                     </form>
                 </td>
-                
             </tr>
             {% endfor %}
         </tbody>
@@ -99,6 +96,7 @@
                 <th>Quantidade</th>
                 <th>Preço Unitário</th>
                 <th>Subtotal</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -116,8 +114,6 @@
                         <button type="submit" class="btn btn-danger btn-sm">Apagar</button>
                     </form>
                 </td>
-                
-                
             </tr>
             {% endfor %}
         </tbody>
@@ -126,4 +122,3 @@
 </div>
 </body>
 </html>
-

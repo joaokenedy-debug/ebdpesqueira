@@ -9,6 +9,19 @@
     </style>
 </head>
 <body>
+    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+        
+        <h3 style="margin: 0; display: flex; gap: 100px;">
+          
+          
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('painel_banco') }}">Banco de Dados</a>
+          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
+          {% if current_user.is_authenticated and current_user.is_admin %}
+            <a class="nav-link" style="color: aliceblue;" href="{{ url_for('todos_pedidos') }}">Pedidos</a>
+            {% endif %}
+
+        </h3>
+      </nav>
 <div class="container mt-4">
     <h2>Painel Administrativo</h2>
 
@@ -113,3 +126,4 @@
 </div>
 </body>
 </html>
+

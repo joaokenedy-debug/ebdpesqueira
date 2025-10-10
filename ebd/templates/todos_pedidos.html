@@ -54,6 +54,13 @@
     </style>
 </head>
 <body>
+     {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+                <a class="nav-link" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Admin</a>
+            {% else %}
+                <a class="nav-link" style="color: aliceblue;" href="{{ url_for('meuspedidos') }}">Meu Perfil</a>
+            {% endif %}
+        {% endif %}
 
 <h1>Todos os Pedidos</h1>
 
@@ -101,3 +108,4 @@
 
 </body>
 </html>
+

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     {% block title %}
-    <title>Escola Dominical - IEADPE-PESQUEIRA</title>
+    <title>Pedidos Licão EBD - IEADPE - Pesqueira</title>
     {% endblock %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -14,28 +14,17 @@
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('home') }}">INICIO</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('login') }}">LOGIN</a>
           <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('cadastro') }}">CADASTRE-SE</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('gerenciar_pdfs') }}">APOIO AO PROFESSOR</a>
-             
-        
-        
         </h3>
-    </nav>
-{% endblock %} 
+      </nav>
+      {% endblock %} 
+      {% block body %}
+    <h1>Pedidos Licão EBD - IEADPE - Pesqueira</h1>
+    
 
-{% block body %}
-    <h1>Pedidos Lição EBD - IEADPE - Pesqueira</h1>
-
-    <!-- Substituição do container por uma imagem -->
-    <div style="display: flex; justify-content: center; align-items: center; margin-top: 30px;">
-        <img src="{{ url_for('static', filename = 'logo.jpg') }" 
-             alt="Logo IEADPE Pesqueira" 
-             style="max-width: 400px; width: 100%; height: auto;">
+    <div class="container">
+       
     </div>
-
-{% endblock %}
+    {% endblock %}
 </body>
+
 </html>
-
-
-
-

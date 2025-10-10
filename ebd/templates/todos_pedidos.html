@@ -13,10 +13,29 @@
             text-align: center;
             color: #143fbb;
         }
+        .top-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #143fbb;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.95em;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #0f2c91;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
             background-color: #fff;
         }
         th, td {
@@ -32,23 +51,18 @@
             padding-left: 0;
             list-style: none;
         }
-        a.btn {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #143fbb;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-        a.btn:hover {
-            background-color: #0f2c91;
-        }
     </style>
 </head>
 <body>
 
 <h1>Todos os Pedidos</h1>
+
+<!-- Botão Exportar Excel -->
+<div class="top-actions">
+    <a class="btn" href="{{ url_for('exportar_pedidos_excel') }}">
+        📊 Exportar para Excel
+    </a>
+</div>
 
 <table>
     <thead>
@@ -78,7 +92,7 @@
                 </ul>
             </td>
             <td>
-                <a class="btn" href="{{ url_for('imprimir_pedido', id_pedido=pedido.id) }}" target="_blank">Imprimir PDF</a>
+                <a class="btn" href="{{ url_for('imprimir_pedido', id_pedido=pedido.id) }}" target="_blank">🖨️ Imprimir PDF</a>
             </td>
         </tr>
         {% endfor %}

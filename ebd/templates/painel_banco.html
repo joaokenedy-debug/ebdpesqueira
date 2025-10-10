@@ -9,6 +9,8 @@
     </style>
 </head>
 <body>
+    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+        <h3 style="margin: 0; display: flex; gap: 100px;">
      {% if current_user.is_authenticated %}
             {% if current_user.is_admin %}
                 <a class="nav-link" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Admin</a>
@@ -16,6 +18,9 @@
                 <a class="nav-link" style="color: aliceblue;" href="{{ url_for('meuspedidos') }}">Meu Perfil</a>
             {% endif %}
         {% endif %}
+                </h3>
+    </nav>
+
 <div class="container mt-4">
     <h2>Painel Administrativo</h2>
 
@@ -128,5 +133,6 @@
 </div>
 </body>
 </html>
+
 
 

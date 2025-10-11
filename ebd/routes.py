@@ -501,7 +501,7 @@ def imprimir_pedido(id_pedido):
     elements.append(Spacer(1, 24))
     elements.append(Paragraph(f"Usuário: {pedido.usuario.usarname.upper()}", style["Title"]))
     elements.append(Paragraph(f"Congregação: {pedido.congregacao.upper()}", style["Title"]))
-    elements.append(Paragraph(f"Data: {agora_brasilia.data.strftime('%d/%m/%Y %H:%M:%S')}", style["Title"]))
+    elements.append(Paragraph(f"Data: {pedido.data.strftime('%d/%m/%Y %H:%M:%S')}", style["Title"]))
 
     doc.build(elements)
     pdf_output.seek(0)
@@ -512,6 +512,7 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
 
 

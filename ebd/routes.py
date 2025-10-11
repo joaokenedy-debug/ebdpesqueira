@@ -233,7 +233,7 @@ def tornar_admin(user_id):
     usuario.is_admin = True
     database.session.commit()  # Corrigido para db.session
     flash(f"{usuario.usarname} agora é administrador!", "success")
-    return redirect(url_for("listar_usuarios"))
+    return redirect(url_for("painel_banco"))
 
 
 @app.route("/adm/<id_usuario>", methods=["GET", "POST"])
@@ -512,6 +512,7 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
 
 

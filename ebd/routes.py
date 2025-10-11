@@ -473,6 +473,8 @@ def imprimir_pedido(id_pedido):
         })
 
     # --- GERA PDF ---
+    # Ajuste de horário para Brasília (-3h UTC)
+    agora_brasilia = datetime.now() - timedelta(hours=3)
     pdf_output = BytesIO()
     doc = SimpleDocTemplate(pdf_output, pagesize=A4)
     elements = []
@@ -510,6 +512,7 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
 
 

@@ -371,8 +371,6 @@ def exportar_pedidos_excel():
             dados.append({
                 "ID Pedido": pedido.id,
                 "Data": pedido.data.strftime("%d/%m/%Y %H:%M"),
-                "Usuário": pedido.usuario.usarname,
-                "Congregação": pedido.congregacao,
                 "Produto": item.produto,
                 "Código": item.codigo,
                 "Quantidade": item.quantidade,
@@ -384,7 +382,7 @@ def exportar_pedidos_excel():
     df = pd.DataFrame(dados)
 
     # Agrupar por Código do produto somando quantidade e subtotal
-    df_agrupado = df.groupby(['Código', 'Produto', 'Usuário', 'Congregação'], as_index=False).agg({
+    df_agrupado = df.groupby(['Código', 'Produto',  'Congregação'], as_index=False).agg({
         'Quantidade':'sum',
         'Subtotal':'sum',
         'ID Pedido':'first',
@@ -512,6 +510,7 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
 
 

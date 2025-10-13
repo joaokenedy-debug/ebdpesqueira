@@ -6,44 +6,149 @@
     <title>Escola Dominical - IEADPE-Pesqueira</title>
     {% endblock %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav {
+            background-color: rgb(20, 79, 187);
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            padding: 20px;
+        }
+
+        nav a {
+            color: aliceblue;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #143fbb;
+            margin-top: 20px;
+        }
+
+        /* Container principal dividido ao meio */
+        .main-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 40px auto;
+            width: 90%;
+            gap: 20px;
+        }
+
+        /* Cada lado ocupa metade da tela */
+        .news-section, .photos-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 50%;
+            padding: 20px;
+        }
+
+        /* Painel de notícias */
+        .news-section h2 {
+            color: rgb(20, 79, 187);
+        }
+
+        /* Galeria de fotos */
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .photos-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .photos-grid img:hover {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
+
 {% block nave %}
 <body>
-    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
+    <nav class="nav nav-pills nav-fill">
         <h3 style="margin: 0; display: flex; gap: 90px;">
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('home') }}">INICIO</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('login') }}">LOGIN</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('cadastro') }}">CADASTRE-SE</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('gerenciar_pdfs') }}">AREA DE APOIO AO PROFESSOR</a>
+            <a href="{{ url_for('home') }}">INÍCIO</a>
+            <a href="{{ url_for('login') }}">LOGIN</a>
+            <a href="{{ url_for('cadastro') }}">CADASTRE-SE</a>
+            <a href="{{ url_for('gerenciar_pdfs') }}">ÁREA DE APOIO AO PROFESSOR</a>
         </h3>
-      </nav>
-      {% endblock %} 
-      {% block body %}
+    </nav>
+{% endblock %}
+
+{% block body %}
     <h1>Escola Dominical - IEADPE-Pesqueira</h1>
-    
 
-   <!-- Logo -->
+    <!-- Logo -->
     <div class="flex justify-center">
-      <svg height="50" viewBox="-3 -3 82 82" width="50" class="text-blue-600">
-        <img src="{{ url_for('static', filename = 'logo.jpg') }}" class="flex justify-center" />
-      </svg>
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo IEADPE" style="width:120px; border-radius:50%; margin-top:15px;">
     </div>
-    <h1>Painel de Noticias</h1>
-    <div class="flex justify-center">
-      <svg height="50" viewBox="-3 -3 82 82" width="50" class="text-blue-600">
-        <img src="{{ url_for('static', filename = 'ebaprado.jpeg') }}" class="flex justify-center" />
-      </svg>
+
+    <!-- Container dividido em duas partes -->
+    <div class="main-container">
+        <!-- Painel de Notícias -->
+        <div class="news-section">
+            <h2>Painel de Notícias</h2>
+            <p>Aqui ficarão as últimas atualizações da Escola Dominical.</p>
+            <ul style="text-align:left;">
+                <li>📅 Próxima aula: Domingo, 9h30</li>
+                <li>📖 Lição 3-Tema: “0 Corpo e as Consequências do Pecado”</li>
+            <h3 style="color: #143fbb;"> Proximas EBAs</h3>
+            
+            <p> 📍 Local: Congregação da Vila Anapolis</p>
+            <p> 📍 Local: Congregação de Pindoba</p>
+            <p> 📍 Local: Templo Matriz</p>
+            </ul>   
+            </ul>
+            
+        </div>
+
+        <!-- Fotos de Eventos -->
+        <div class="photos-section">
+            <h2>Fotos de Eventos</h2>
+            <div class="photos-grid">
+                <h2>EBA Barreiras 11/10</h2>
+                <a href="{{ url_for('static', filename='eba/eba1.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba1.jpeg') }}" alt="Evento 1">
+                </a>
+                <a href="{{ url_for('static', filename='eba/eba2.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba2.jpeg') }}" alt="Evento 2">
+                </a>
+                <a href="{{ url_for('static', filename='eba/eba2.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba2.jpeg') }}" alt="Evento 2">
+                </a>
+                <h2>EBA Prado 12/10</h2>
+                <a href="{{ url_for('static', filename='eba/eba4.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba4.jpeg') }}" alt="Evento 3">
+                </a>
+                <a href="{{ url_for('static', filename='eba/eba5.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba5.jpeg') }}" alt="Evento 4">
+                </a>
+                <a href="{{ url_for('static', filename='eba/eba6.jpeg') }}" target="_blank">
+                    <img src="{{ url_for('static', filename='eba/eba6.jpeg') }}" alt="Evento 5">
+                </a>
+                
+
+            </div>
+        </div>
     </div>
-    {% endblock %}
-    
+{% endblock %}
+
 </body>
-
 </html>
-
-
-
-
-
-
-
-

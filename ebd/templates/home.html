@@ -82,27 +82,32 @@
 
 {% block nave %}
 <body>
-    <nav class="nav nav-pills nav-fill">
-    <h3 style="margin: 0; display: flex; gap: 90px;">
-        <a href="{{ url_for('home') }}">INÍCIO</a>
-        <a href="{{ url_for('cadastro') }}">CADASTRE-SE</a>
-        <a href="{{ url_for('gerenciar_pdfs') }}">ÁREA DE APOIO AO PROFESSOR</a>
-
-        {% if current_user.is_authenticated %}
-            {% if current_user.is_admin %}
-                <a href="{{ url_for('adm', id_usuario=current_user.id) }}">PAINEL ADM</a>
-                <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-                <span class="nav-link disabled" aria-disabled="true" style="color: aliceblue;">{{ current_user.usarname }}</span>
+    <nav class="nav nav-pills" style="display: flex; justify-content: space-between; align-items: center; padding: 5 40px; background-color: #143fbb; color: white;">
+        <!-- Links principais à esquerda -->
+        <div style="display: flex; gap: 80px; align-items: center;">
+            <a href="{{ url_for('home') }}" style="color: white; text-decoration: none;">INÍCIO</a>
+            <a href="{{ url_for('cadastro') }}" style="color: white; text-decoration: none;">CADASTRE-SE</a>
+            <a href="{{ url_for('gerenciar_pdfs') }}" style="color: white; text-decoration: none;">ÁREA DE APOIO AO PROFESSOR</a>
+    
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('adm', id_usuario=current_user.id) }}" style="color: white; text-decoration: none;">PAINEL ADM</a>
+                {% else %}
+                    <a href="{{ url_for('perfil', id_usuario=current_user.id) }}" style="color: white; text-decoration: none;">FAZER PEDIDO</a>
+                {% endif %}
             {% else %}
-                <a href="{{ url_for('perfil', id_usuario=current_user.id) }}">FAZER PEDIDO</a>
-                <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-                <span class="nav-link disabled" aria-disabled="true" style="color: aliceblue;">{{ current_user.usarname }}</span>
+                <a href="{{ url_for('login') }}" style="color: white; text-decoration: none;">LOGIN</a>
             {% endif %}
-        {% else %}
-            <a href="{{ url_for('login') }}">LOGIN</a>
+        </div>
+    
+        <!-- Nome do usuário e logout à direita -->
+        {% if current_user.is_authenticated %}
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <span style="color: black;">{{ current_user.usarname }}</span>
+            <a href="{{ url_for('logout') }}" style="color: white; text-decoration: none;">Sair</a>
+        </div>
         {% endif %}
-    </h3>
-</nav>
+    </nav>
 
 {% endblock %}
 
@@ -166,6 +171,7 @@
 
 </body>
 </html>
+
 
 
 

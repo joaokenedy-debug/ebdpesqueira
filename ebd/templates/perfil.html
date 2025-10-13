@@ -33,10 +33,17 @@
         nav {
             background-color: rgb(20, 79, 187);
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
             flex-wrap: wrap;
-            gap: 30px;
-            padding: 15px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         nav a {
@@ -48,6 +55,22 @@
 
         nav a:hover {
             color: #ffeb99;
+        }
+
+        /* ======= BOTÃO HAMBÚRGUER ======= */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            border-radius: 2px;
+            transition: all 0.3s;
         }
 
         /* ======= BOTÃO DO CARRINHO ======= */
@@ -140,12 +163,6 @@
 
         /* ======= RESPONSIVIDADE ======= */
         @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
             h1 {
                 font-size: 1.5rem;
             }
@@ -157,14 +174,32 @@
             .card img {
                 height: 150px;
             }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                background-color: #143fbb;
+                text-align: center;
+                padding: 15px 0;
+                border-top: 1px solid rgba(255,255,255,0.2);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            nav a {
+                padding: 10px 0;
+                display: block;
+            }
         }
 
         @media (max-width: 480px) {
-            nav {
-                padding: 10px;
-                gap: 10px;
-            }
-
             h1 {
                 font-size: 1.3rem;
             }
@@ -188,11 +223,30 @@
 {% block nave %}
 <body>
     <nav>
-        <a href="{{ url_for('home') }}">🏠 Início</a>
-        <a href="{{ url_for('meuspedidos') }}">🧾 Meus Pedidos</a>
-        <a href="{{ url_for('gerenciar_pdfs') }}">📚 Apoio ao Professor</a>
-        <a href="{{ url_for('logout') }}">🚪 Sair</a>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span style="color:white; font-weight:bold;">📖 IEADPE - Pesqueira</span>
+        </div>
+
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="nav-links" id="menu">
+            <a href="{{ url_for('home') }}">🏠 Início</a>
+            <a href="{{ url_for('meuspedidos') }}">🧾 Meus Pedidos</a>
+            <a href="{{ url_for('gerenciar_pdfs') }}">📚 Apoio ao Professor</a>
+            <a href="{{ url_for('logout') }}">🚪 Sair</a>
+        </div>
     </nav>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('active');
+        }
+    </script>
 {% endblock %}
 
 {% block body %}

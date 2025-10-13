@@ -189,8 +189,11 @@
 {% block nave %}
 <body>
     <nav>
+        <a href="{{ url_for('home') }}">🏠 Início</a>
+
+        <a href="{{ url_for('gerenciar_pdfs') }}">📚 Apoio ao Professor</a>
         <a href="{{ url_for('painel_banco') }}">💾 Banco de Dados</a>
-        <a href="{{ url_for('listar_usuarios') }}">👥 Cadastros</a>
+        
         <a href="{{ url_for('logout') }}">🚪 Sair</a>
         {% if current_user.is_authenticated and current_user.is_admin %}
             <a href="{{ url_for('todos_pedidos') }}">📦 Pedidos</a>
@@ -221,3 +224,4 @@
 {% endblock %}
 </body>
 </html>
+

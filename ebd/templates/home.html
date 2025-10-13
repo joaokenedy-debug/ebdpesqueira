@@ -90,7 +90,7 @@
 
         {% if current_user.is_authenticated %}
             {% if current_user.is_admin %}
-                <a href="{{ url_for('adm', id_usuario=current_user.id)) }}">PAINEL ADM</a>
+                <a href="{{ url_for('adm', id_usuario=current_user.id) }}">PAINEL ADM</a>
                 <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
             {% else %}
                 <a href="{{ url_for('perfil', id_usuario=current_user.id) }}">FAZER PEDIDO</a>
@@ -165,5 +165,6 @@
 
 </body>
 </html>
+
 
 

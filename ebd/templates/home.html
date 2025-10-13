@@ -92,11 +92,11 @@
             {% if current_user.is_admin %}
                 <a href="{{ url_for('adm', id_usuario=current_user.id) }}">PAINEL ADM</a>
                 <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-            <h4 class="nav-link disabled" aria-disabled="true" style="color: aliceblue;">{{usuario}} - {{ congregacao }}</h4>
+            <h1 class="nav-link disabled" aria-disabled="true" style="color: aliceblue;">{{usuario}} - </h1>
             {% else %}
                 <a href="{{ url_for('perfil', id_usuario=current_user.id) }}">FAZER PEDIDO</a>
                 <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-                <h3 class="nav-link disabled" aria-disabled="true" style="color: rgb(34, 21, 49);">{{usuario}} - {{ congregacao }}</h3>
+                h1 class="nav-link disabled" aria-disabled="true" style="color: aliceblue;">{{usuario}} - </h1>
             {% endif %}
         {% else %}
             <a href="{{ url_for('login') }}">LOGIN</a>
@@ -166,6 +166,7 @@
 
 </body>
 </html>
+
 
 
 

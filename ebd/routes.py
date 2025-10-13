@@ -369,32 +369,28 @@ def exportar_pedidos_excel():
     for pedido in pedidos:
         for item in pedido.itens:
             dados.append({
-                "ID Pedido": pedido.id,
-                "Data": pedido.data.strftime("%d/%m/%Y %H:%M"),
-                "Produto": item.produto,
                 "Código": item.codigo,
+                "Produto": item.produto,
                 "Quantidade": item.quantidade,
                 "Preço Unitário": item.preco_unitario,
                 "Subtotal": item.subtotal,
-                "Total Pedido": pedido.total,
             })
 
     df = pd.DataFrame(dados)
 
-    # Agrupar por Código do produto somando quantidade e subtotal
-    df_agrupado = df.groupby(['Código', 'Produto',  'Congregação'], as_index=False).agg({
-        'Quantidade':'sum',
-        'Subtotal':'sum',
-        'ID Pedido':'first',
-        'Data':'first',
-        'Preço Unitário':'first',
-        'Total Pedido':'first'
+    # Agrupar apenas pelo Código do produto
+    df_agrupado = df.groupby(['Código', 'Produto'], as_index=False).agg({
+        'Quantidade': 'sum',
+        'Subtotal': 'sum',
+        'Preço Unitário': 'first'
     })
 
     output = BytesIO()
     df_agrupado.to_excel(output, index=False)
     output.seek(0)
+
     return send_file(output, as_attachment=True, download_name="todos_pedidos.xlsx")
+
 
 
 
@@ -510,6 +506,7 @@ def imprimir_pedido(id_pedido):
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
 
 

@@ -86,7 +86,7 @@
         <!-- Links principais à esquerda -->
         <div style="display: flex; gap: 80px; align-items: center;">
             <a href="{{ url_for('home') }}" style="color: white; text-decoration: none;">INÍCIO</a>
-            <a href="{{ url_for('cadastro') }}" style="color: white; text-decoration: none;">CADASTRE-SE</a>
+            
             <a href="{{ url_for('gerenciar_pdfs') }}" style="color: white; text-decoration: none;">ÁREA DE APOIO AO PROFESSOR</a>
     
             {% if current_user.is_authenticated %}
@@ -96,6 +96,7 @@
                     <a href="{{ url_for('perfil', id_usuario=current_user.id) }}" style="color: white; text-decoration: none;">FAZER PEDIDO</a>
                 {% endif %}
             {% else %}
+                <a href="{{ url_for('cadastro') }}" style="color: white; text-decoration: none;">CADASTRE-SE</a>
                 <a href="{{ url_for('login') }}" style="color: white; text-decoration: none;">LOGIN</a>
             {% endif %}
         </div>
@@ -171,6 +172,7 @@
 
 </body>
 </html>
+
 
 
 

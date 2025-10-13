@@ -64,7 +64,8 @@
             {% if current_user.is_admin %}
                 <a class="nav-link" style="color: aliceblue;" href="{{ url_for('adm', id_usuario=current_user.id) }}">Admin</a>
             {% else %}
-                <a class="nav-link" style="color: aliceblue;" href="{{ url_for('perfil') }}">Meu Perfil</a>
+                <a class="nav-link" style="color: aliceblue;" href="{{ url_for('perfil', id_usuario=current_user.id) }}">Fazer Pedidos</a>
+
             {% endif %}
         {% endif %}
     </h3>
@@ -101,6 +102,7 @@
     </div>
 </body>
 </html>
+
 
 
 

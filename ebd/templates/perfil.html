@@ -3,26 +3,202 @@
 <head>
     <meta charset="UTF-8">
     {% block title %}
-    <title>Pedidos Licão EBD - IEADPE - Pesqueira</title>
+    <title>Pedidos Lição EBD - IEADPE - Pesqueira</title>
     {% endblock %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ======= BASE ======= */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: #143fbb;
+            margin-top: 20px;
+            font-size: 1.8rem;
+        }
+
+        h2 {
+            color: #222;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        /* ======= NAVBAR ======= */
+        nav {
+            background-color: rgb(20, 79, 187);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 15px;
+        }
+
+        nav a {
+            color: aliceblue;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffeb99;
+        }
+
+        /* ======= BOTÃO DO CARRINHO ======= */
+        .btn-carrinho {
+            display: inline-block;
+            background-color: #143fbb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 15px auto;
+            transition: background-color 0.3s;
+        }
+
+        .btn-carrinho:hover {
+            background-color: #0f3299;
+        }
+
+        /* ======= CONTAINER DOS PRODUTOS ======= */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            color: #143fbb;
+        }
+
+        .card .preco {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card input[type="number"] {
+            width: 60px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .card button {
+            background-color: #143fbb;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #0f3299;
+        }
+
+        /* ======= RESPONSIVIDADE ======= */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+
+            .card img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .card {
+                padding: 10px;
+            }
+
+            .card img {
+                height: 120px;
+            }
+
+            .btn-carrinho {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
+
 {% block nave %}
 <body>
-    <nav class="nav nav-pills nav-fill" style="background-color:rgb(20, 79, 187); display: flex; justify-content: center; gap: 50px; padding: 20px;">
-        
-        <h3 style="margin: 0; display: flex; gap: 100px;">
-            <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('home') }}">Inicio</a>
-            <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('meuspedidos') }}">Meus Pedidos</a>
-            <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('gerenciar_pdfs') }}">Apoio ao professor</a>
-          <a class="nav-link disabled" aria-disabled="true" style="color: aliceblue;" href="{{ url_for('logout') }}">Sair</a>
-        </h3>
-      </nav>
-      {% endblock %} 
-      {% block body %}
-    <h1>Pedidos Licão EBD - IEADPE - Pesqueira</h1>
-    <h2 class="nav-link disabled" aria-disabled="true" style="color: rgb(34, 21, 49);">{{usuario}} - {{ congregacao }}</h2>
-    
+    <nav>
+        <a href="{{ url_for('home') }}">🏠 Início</a>
+        <a href="{{ url_for('meuspedidos') }}">🧾 Meus Pedidos</a>
+        <a href="{{ url_for('gerenciar_pdfs') }}">📚 Apoio ao Professor</a>
+        <a href="{{ url_for('logout') }}">🚪 Sair</a>
+    </nav>
+{% endblock %}
+
+{% block body %}
+    <h1>Pedidos Lição EBD - IEADPE - Pesqueira</h1>
+    <h2>{{ usuario }} - {{ congregacao }}</h2>
+
     <a href="{{ url_for('ver_carrinho') }}" class="btn-carrinho">🛒 Ver Carrinho</a>
 
     <div class="container">
@@ -33,16 +209,12 @@
             <p class="preco">R$ {{ "%.2f"|format(produto.preco) }}</p>
             <form action="{{ url_for('adicionar') }}" method="POST">
                 <input type="hidden" name="produto_id" value="{{ produto.id }}">
-                <input type="number" name="quantidade" min="-10" value="1">
+                <input type="number" name="quantidade" min="1" value="1">
                 <button type="submit">Adicionar</button>
             </form>
         </div>
         {% endfor %}
     </div>
-    {% endblock %}
+{% endblock %}
 </body>
-
 </html>
-
-
-

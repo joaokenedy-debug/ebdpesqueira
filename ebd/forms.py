@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, SelectField
 from flask_wtf.file import FileRequired, FileAllowed
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from ebd.models import Usuario
@@ -62,6 +62,7 @@ class FormCriarConta(FlaskForm):
         usuario = Usuario.query.filter_by(email=email.data).first()
         if usuario :
            return ValidationError ("E-mail já cadastrado")
+
 
 
 

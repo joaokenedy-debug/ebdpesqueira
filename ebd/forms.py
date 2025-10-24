@@ -10,20 +10,20 @@ class FormLogin(FlaskForm):
     congregacao = SelectField ( "Congregação",
                                choices=[
             ('', 'Selecione uma congregação'),
-            ('alagoinha', 'Alagoinha'),
-            ('barreiras', 'Barreiras'),
-            ('caixa_dagua', 'Caixa D`Agua'),
-            ('carrapicho', 'Carrapicho'),
-            ('central', 'Central'),
-            ('lage_grande', 'Lage Grande'),
-            ('mage', 'Mage'),
-            ('matriz', 'Matriz'),
-            ('mutuca', 'Mutuca'),
-            ('pindoba', 'Pindoba'),
-            ('prado', 'Prado'),
-            ('sete_baraunas', 'Sete Baraunas'),
-            ('socorro', 'Socorro'),
-            ('vila_anapolis', 'Vila Anapolis'),
+            ('Alagoinha', 'Alagoinha'),
+            ('Barreiras', 'Barreiras'),
+            ('Caixa_dagua', 'Caixa D`Agua'),
+            ('Carrapicho', 'Carrapicho'),
+            ('Central', 'Central'),
+            ('Lage_grande', 'Lage Grande'),
+            ('Mage', 'Mage'),
+            ('Matriz', 'Matriz'),
+            ('Mutuca', 'Mutuca'),
+            ('Pindoba', 'Pindoba'),
+            ('Prado', 'Prado'),
+            ('Sete_baraunas', 'Sete Baraunas'),
+            ('Socorro', 'Socorro'),
+            ('Vila_anapolis', 'Vila Anapolis'),
         ],
     
                                validators= [DataRequired()])
@@ -37,20 +37,20 @@ class FormCriarConta(FlaskForm):
     congregacao = SelectField ( "Congregação",
                                choices=[
             ('', 'Selecione uma congregação'),
-            ('alagoinha', 'Alagoinha'),
-            ('barreiras', 'Barreiras'),
-            ('caixa_dagua', 'Caixa D`Agua'),
-            ('carrapicho', 'Carrapicho'),
-            ('central', 'Central'),
-            ('lage_grande', 'Lage Grande'),
-            ('mage', 'Mage'),
-            ('matriz', 'Matriz'),
-            ('mutuca', 'Mutuca'),
-            ('pindoba', 'Pindoba'),
-            ('prado', 'Prado'),
-            ('sete_baraunas', 'Sete Baraunas'),
-            ('socorro', 'Socorro'),
-            ('vila_anapolis', 'Vila Anapolis'),
+            ('Alagoinha', 'Alagoinha'),
+            ('Barreiras', 'Barreiras'),
+            ('Caixa_dagua', 'Caixa D`Agua'),
+            ('Carrapicho', 'Carrapicho'),
+            ('Central', 'Central'),
+            ('Lage_grande', 'Lage Grande'),
+            ('Mage', 'Mage'),
+            ('Matriz', 'Matriz'),
+            ('Mutuca', 'Mutuca'),
+            ('Pindoba', 'Pindoba'),
+            ('Prado', 'Prado'),
+            ('Sete_baraunas', 'Sete Baraunas'),
+            ('Socorro', 'Socorro'),
+            ('Vila_anapolis', 'Vila Anapolis'),
         ],
     
                                validators= [DataRequired()])
@@ -62,6 +62,7 @@ class FormCriarConta(FlaskForm):
         usuario = Usuario.query.filter_by(email=email.data).first()
         if usuario :
            return ValidationError ("E-mail já cadastrado")
+
 
 
 

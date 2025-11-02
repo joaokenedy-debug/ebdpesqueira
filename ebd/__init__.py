@@ -4,9 +4,15 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 import os
+from dotenv import load_dotenv
 
+
+load_dotenv()  # Garante que o .env é carregado
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://bd_ebdpesqueira_user:eLL46eLsSNGRy9Yas5VIZpouEJYhkLNM@dpg-d3ftvjali9vc73emu3jg-a/bd_ebdpesqueira"
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"postgresql+psycopg2://{os.getenv('USER')}:{os.getenv('PASSWORD')}@"
+    f"{os.getenv('HOST')}:{os.getenv('PORT')}/{os.getenv('DBNAME')}?sslmode=require"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SECRET_KEY"] = "193c5a16"
 app.config["UPLOAD_FOLDER"] = "static/pedidos"
@@ -24,6 +30,7 @@ with app.app_context():
 
 # Importa as rotas após inicializar o banco
 from ebd import routes
+
 
 
 

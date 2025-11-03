@@ -63,6 +63,39 @@ class FormCriarConta(FlaskForm):
         if usuario :
            return ValidationError ("E-mail já cadastrado")
 
+class FormRedefinirSenha(FlaskForm):
+    senha = PasswordField(
+        "Nova Senha",
+        validators=[DataRequired(), Length(min=6, message="A senha deve ter pelo menos 6 caracteres.")]
+    )
+    confirmar_senha = PasswordField(
+        "Confirmar Senha",
+        validators=[DataRequired(), EqualTo("senha", message="As senhas devem coincidir.")]
+    )
+    submit = SubmitField("Redefinir Senha")
+class FormRecuperarSenha(FlaskForm):
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    congregacao = SelectField("Congregação",
+        choices=[
+            ('', 'Selecione uma congregação'),
+            ('alagoinha', 'Alagoinha'),
+            ('barreiras', 'Barreiras'),
+            ('caixa_dagua', 'Caixa D`Agua'),
+            ('carrapicho', 'Carrapicho'),
+            ('central', 'Central'),
+            ('lage_grande', 'Lage Grande'),
+            ('mage', 'Mage'),
+            ('matriz', 'Matriz'),
+            ('mutuca', 'Mutuca'),
+            ('pindoba', 'Pindoba'),
+            ('prado', 'Prado'),
+            ('sete_baraunas', 'Sete Baraunas'),
+            ('socorro', 'Socorro'),
+            ('vila_anapolis', 'Vila Anapolis'),
+        ],
+        validators=[DataRequired()]
+    )
+    submit = SubmitField("Continuar")
 
 
 

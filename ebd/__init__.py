@@ -9,10 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Garante que o .env é carregado
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{os.getenv('USER')}:{os.getenv('PASSWORD')}@"
-    f"{os.getenv('HOST')}:{os.getenv('PORT')}/{os.getenv('DBNAME')}?sslmode=require"
-)
+DATABASE_URL = "postgresql://ebd_pesqueira:8Qyd9NhFX7aCf0deinskEuJdJyH8Enbx@dpg-d4493te3jp1c739egngg-a/bd_ebdpesqueira_1eie"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SECRET_KEY"] = "193c5a16"
 app.config["UPLOAD_FOLDER"] = "static/pedidos"
@@ -30,6 +27,7 @@ with app.app_context():
 
 # Importa as rotas após inicializar o banco
 from ebd import routes
+
 
 
 

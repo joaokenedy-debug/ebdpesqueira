@@ -2,7 +2,7 @@ from flask import render_template, url_for, redirect, session, request,  send_fi
 from ebd import app, database, bcrypt
 from ebd.models import Usuario, Pedido, ItemPedido
 from flask_login import login_required,login_user, logout_user, current_user
-from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha
+from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha, FormRedefinirSenha
 import os
 from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
@@ -546,6 +546,7 @@ def recuperar_senha():
             flash("❌ Nenhum usuário encontrado com esse email e congregação.", "danger")
 
     return render_template("recuperar_senha.html", form=form)
+
 
 
 

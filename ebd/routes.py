@@ -2,7 +2,7 @@ from flask import render_template, url_for, redirect, session, request,  send_fi
 from ebd import app, database, bcrypt
 from ebd.models import Usuario, Pedido, ItemPedido
 from flask_login import login_required,login_user, logout_user, current_user
-from ebd.forms import FormLogin, FormCriarConta
+from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha
 import os
 from datetime import datetime,timedelta
 from werkzeug.utils import secure_filename
@@ -507,6 +507,44 @@ def imprimir_pedido(id_pedido):
         mimetype="application/pdf"
     )
 
+@app.route("/redefinir_senha/<int:id_usuario>", methods=["GET", "POST"])
+def redefinir_senha(id_usuario):
+    usuario = Usuario.query.get_or_404(id_usuario)
+    form = FormRedefinirSenha()
+
+    if form.validate_on_submit():
+        nova_senha_hash = bcrypt.generate_password_hash(form.senha.data).decode("utf-8")
+        usuario.senha = nova_senha_hash
+
+        try:
+            database.session.commit()
+            flash(f"✅ Senha do usuário {usuario.usarname} redefinida com sucesso!", "success")
+            return redirect(url_for("login"))
+        except Exception as e:
+            database.session.rollback()
+            flash(f"❌ Erro ao salvar nova senha: {e}", "danger")
+
+    return render_template("redefinir_senha.html", form=form, usuario=usuario)
+@app.route("/recuperar_senha", methods=["GET", "POST"])
+def recuperar_senha():
+    form = FormRecuperarSenha()
+
+    if form.validate_on_submit():
+        email = form.email.data.strip()
+        congregacao = form.congregacao.data.strip()
+
+        usuario = Usuario.query.filter(
+            func.lower(Usuario.email) == func.lower(email),
+            func.lower(Usuario.congregacao) == func.lower(congregacao)
+        ).first()
+
+        if usuario:
+            flash(f"✅ Usuário encontrado: {usuario.usarname}. Agora redefina sua senha.", "success")
+            return redirect(url_for("redefinir_senha", id_usuario=usuario.id))
+        else:
+            flash("❌ Nenhum usuário encontrado com esse email e congregação.", "danger")
+
+    return render_template("recuperar_senha.html", form=form)
 
 
 

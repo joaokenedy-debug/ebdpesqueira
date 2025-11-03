@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .card {
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: .3rem;
+            color: #333;
+        }
+
+        input, select {
+            padding: .7rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: .75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            background: #ffeeba;
+            color: #856404;
+            padding: .8rem;
+            border-radius: 5px;
+            border: 1px solid #ffeeba;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Recuperar Senha</h2>
+
+        <!-- Mensagens flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <label for="email">{{ form.email.label.text }}</label>
+            {{ form.email(class="form-control") }}
+
+            <label for="congregacao">{{ form.congregacao.label.text }}</label>
+            {{ form.congregacao(class="form-select") }}
+
+            <button type="submit">{{ form.submit.label.text }}</button>
+        </form>
+
+        <div class="link">
+            <a href="{{ url_for('login') }}">Voltar para o login</a>
+        </div>
+    </div>
+</body>
+</html>

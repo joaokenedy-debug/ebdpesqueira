@@ -13,6 +13,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+from sqlalchemy import func
 
 
 
@@ -545,6 +546,7 @@ def recuperar_senha():
             flash("❌ Nenhum usuário encontrado com esse email e congregação.", "danger")
 
     return render_template("recuperar_senha.html", form=form)
+
 
 
 

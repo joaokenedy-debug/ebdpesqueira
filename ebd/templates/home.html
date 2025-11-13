@@ -84,12 +84,12 @@
         }
 
         .photos-grid img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* mantém o corte */
+                object-position: center top; /* mostra mais a parte de cima */
+                border-radius: 10px;
+            }
 
         .photos-grid img:hover {
             transform: scale(1.05);
@@ -258,6 +258,7 @@
 {% endblock %}
 </body>
 </html>
+
 
 
 

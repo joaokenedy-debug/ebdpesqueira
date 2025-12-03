@@ -8,7 +8,7 @@ def load_usuario(id_usuario):
 
 
 class Usuario(database.Model, UserMixin):
-    __tablename__ = "Usuario"
+    __tablename__ = "usuario"
     id = database.Column(database.Integer , primary_key = True)
     usarname = database.Column(database.String, nullable=False)
     email = database.Column(database.String, nullable=False)
@@ -36,6 +36,7 @@ class ItemPedido(database.Model):
     quantidade = database.Column(database.Integer, nullable=False)
     preco_unitario = database.Column(database.Float, nullable=False)
     subtotal = database.Column(database.Float, nullable=False)
+
 
 
 

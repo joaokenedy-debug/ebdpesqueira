@@ -1,6 +1,8 @@
 {% extends "home.html" %}
-{% block content %}
+
+{% block body %}
 <h2>Meus Pedidos</h2>
+
 <table border="1">
   <tr>
     <th>ID</th>
@@ -26,4 +28,3 @@
 
 <a href="{{ url_for('exportar_pedidos_excel') }}">Exportar para Excel</a>
 {% endblock %}
-

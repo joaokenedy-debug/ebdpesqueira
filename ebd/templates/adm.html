@@ -195,6 +195,9 @@
 
         <a href="{{ url_for('gerenciar_pdfs') }}">📚 Apoio ao Professor</a>
         <a href="{{ url_for('painel_banco') }}">💾 Banco de Dados</a>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+        <li><a href="{{ url_for('caixa') }}">Caixa</a></li>
+        {% endif %}
         
         <a href="{{ url_for('logout') }}">🚪 Sair</a>
         {% if current_user.is_authenticated and current_user.is_admin %}
@@ -226,5 +229,6 @@
 {% endblock %}
 </body>
 </html>
+
 
 

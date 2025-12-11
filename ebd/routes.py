@@ -547,6 +547,71 @@ def recuperar_senha():
 
     return render_template("recuperar_senha.html", form=form)
 
+@app.route("/caixa")
+@login_required
+def caixa():
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
+    caixa = Caixa.query.order_by(Caixa.data.desc()).all()
+
+    # somatórios importantes
+    saldo_caixa = sum(c.valor for c in caixa)
+    total_receber = sum(p.saldo_restante for p in pedidos if p.saldo_restante > 0)
+
+    return render_template(
+        "caixa.html",
+        pedidos=pedidos,
+        caixa=caixa,
+        saldo_caixa=saldo_caixa,
+        total_receber=total_receber
+    )
+    
+@app.route("/adicionar_verba", methods=["POST"])
+@login_required
+def adicionar_verba():
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+
+    valor = float(request.form["valor"])
+    descricao = request.form["descricao"]
+
+    novo = Caixa(descricao=descricao, valor=valor)
+    database.session.add(novo)
+    database.session.commit()
+
+    flash("Verba adicionada com sucesso!", "success")
+    return redirect(url_for("caixa"))
+
+@app.route("/excluir_verba/<int:id_verba>", methods=["POST"])
+@login_required
+def excluir_verba(id_verba):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+
+    verba = Caixa.query.get_or_404(id_verba)
+    database.session.delete(verba)
+    database.session.commit()
+
+    flash("Verba removida!", "success")
+    return redirect(url_for("caixa"))
+
+@app.route("/registrar_pagamento/<int:id_pedido>", methods=["POST"])
+@login_required
+def registrar_pagamento(id_pedido):
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+
+    pedido = Pedido.query.get_or_404(id_pedido)
+    valor = float(request.form["valor_pago"])
+
+    novo = Pagamento(id_pedido=pedido.id, valor_pago=valor)
+    database.session.add(novo)
+    database.session.commit()
+
+    flash("Pagamento registrado!", "success")
+    return redirect(url_for("caixa"))
 
 
 

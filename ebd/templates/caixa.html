@@ -1,13 +1,16 @@
 {% extends "home.html" %}
-{% block content %}
+
+{% block body %}
+
 <h2>📦 Caixa Geral</h2>
 
-<h3>Saldo total no caixa: R$ {{ saldo_caixa }}</h3>
-<h3>Total a receber: R$ {{ total_receber }}</h3>
+<h3>Saldo total no caixa: R$ {{ "%.2f"|format(saldo_caixa) }}</h3>
+<h3>Total a receber: R$ {{ "%.2f"|format(total_receber) }}</h3>
 
 <hr>
 
 <h2>Adicionar Verba</h2>
+
 <form method="POST" action="{{ url_for('adicionar_verba') }}">
     <input type="text" name="descricao" placeholder="Descrição" required>
     <input type="number" step="0.01" name="valor" placeholder="Valor" required>
@@ -16,60 +19,64 @@
 
 <hr>
 
-<h2>Verbas adicionadas</h2>
+<h2>Verbas Adicionadas</h2>
+
 <table border="1">
-<tr>
-    <th>ID</th>
-    <th>Descrição</th>
-    <th>Valor</th>
-    <th>Data</th>
-    <th>Ações</th>
-</tr>
-{% for v in caixa %}
-<tr>
-    <td>{{ v.id }}</td>
-    <td>{{ v.descricao }}</td>
-    <td>R$ {{ v.valor }}</td>
-    <td>{{ v.data.strftime("%d/%m/%Y") }}</td>
-    <td>
-        <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
-            <button type="submit">Excluir</button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
+    <tr>
+        <th>ID</th>
+        <th>Descrição</th>
+        <th>Valor</th>
+        <th>Data</th>
+        <th>Ações</th>
+    </tr>
+
+    {% for v in caixa %}
+    <tr>
+        <td>{{ v.id }}</td>
+        <td>{{ v.descricao }}</td>
+        <td>R$ {{ "%.2f"|format(v.valor) }}</td>
+        <td>{{ v.data.strftime("%d/%m/%Y") }}</td>
+        <td>
+            <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
+                <button type="submit">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
 </table>
 
 <hr>
 
 <h2>Pedidos e Pagamentos</h2>
-<table border="1">
-<tr>
-    <th>ID Pedido</th>
-    <th>Congregação</th>
-    <th>Total</th>
-    <th>Pago</th>
-    <th>Restante</th>
-    <th>Quitado?</th>
-    <th>Registrar Pagamento</th>
-</tr>
 
-{% for p in pedidos %}
-<tr>
-    <td>{{ p.id }}</td>
-    <td>{{ p.congregacao }}</td>
-    <td>R$ {{ p.total }}</td>
-    <td>R$ {{ p.total_pago }}</td>
-    <td>R$ {{ p.saldo_restante }}</td>
-    <td>{{ "Sim" if p.quitado else "Não" }}</td>
-    <td>
-        <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
-            <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
-            <button type="submit">Pagar</button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
+<table border="1">
+    <tr>
+        <th>ID Pedido</th>
+        <th>Congregação</th>
+        <th>Total</th>
+        <th>Pago</th>
+        <th>Restante</th>
+        <th>Quitado?</th>
+        <th>Registrar Pagamento</th>
+    </tr>
+
+    {% for p in pedidos %}
+    <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.congregacao }}</td>
+        <td>R$ {{ "%.2f"|format(p.total) }}</td>
+        <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
+        <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
+        <td>{{ "Sim" if p.quitado else "Não" }}</td>
+
+        <td>
+            <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
+                <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
+                <button type="submit">Pagar</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
 </table>
 
 {% endblock %}

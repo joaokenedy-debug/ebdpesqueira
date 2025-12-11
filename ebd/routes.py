@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, session, request,  send_file, flash,send_from_directory
 from ebd import app, database, bcrypt
-from ebd.models import Usuario, Pedido, ItemPedido
+from ebd.models import Usuario, Pedido, ItemPedido, Caixa, Pagamento
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha, FormRedefinirSenha
 import os
@@ -612,6 +612,7 @@ def registrar_pagamento(id_pedido):
 
     flash("Pagamento registrado!", "success")
     return redirect(url_for("caixa"))
+
 
 
 

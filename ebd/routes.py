@@ -26,6 +26,7 @@ produtos = df.to_dict(orient="records")
 PDF_FOLDER = os.path.join(app.root_path, 'static', 'pdf')
 
 
+
 @app.route("/")
 def home():
     return render_template("home.html", produtos=produtos)
@@ -613,6 +614,32 @@ def registrar_pagamento(id_pedido):
     flash("Pagamento registrado!", "success")
     return redirect(url_for("caixa"))
 
+TOTAL_VISITAS = 0
+usuarios_online = {}
+
+@app.before_request
+def contar_visitas_e_online():
+    global TOTAL_VISITAS
+
+    TOTAL_VISITAS += 1
+
+    ip = request.remote_addr
+    agora = datetime.now()
+
+    usuarios_online[ip] = agora
+
+    limite = agora - timedelta(minutes=2)
+    ativos = {ip: t for ip, t in usuarios_online.items() if t >= limite}
+
+    usuarios_online.clear()
+    usuarios_online.update(ativos)
+
+@app.context_processor
+def injetar_stats():
+    return dict(
+        total_visitas=TOTAL_VISITAS,
+        online=len(usuarios_online)
+    )
 
 
 

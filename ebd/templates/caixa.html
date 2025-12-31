@@ -129,6 +129,40 @@
             padding: 6px;
         }
     }
+    .verbas-horizontal {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.verba-card {
+    background: #fff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 240px;
+}
+
+.verba-card strong {
+    font-size: 13px;
+}
+
+.verba-card small {
+    font-size: 11px;
+    color: #666;
+}
+
+.verba-valor {
+    font-weight: bold;
+    color: #198754;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
 </style>
 
 
@@ -158,31 +192,25 @@
 
     <h2>📑 Verbas Adicionadas</h2>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Descrição</th>
-            <th>Valor</th>
-            <th>Data</th>
-            <th>Ações</th>
-        </tr>
+<div class="verbas-horizontal">
+    {% for v in caixa %}
+    <div class="verba-card">
+        <div>
+            <strong>{{ v.descricao }}</strong><br>
+            <small>{{ v.data.strftime("%d/%m/%Y") }}</small>
+        </div>
 
-        {% for v in caixa %}
-        <tr>
-            <td>{{ v.id }}</td>
-            <td>{{ v.descricao }}</td>
-            <td>R$ {{ "%.2f"|format(v.valor) }}</td>
-            <td>{{ v.data.strftime("%d/%m/%Y") }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
-                    <button class="btn-excluir" type="submit">Excluir</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <div class="verba-valor">
+            R$ {{ "%.2f"|format(v.valor) }}
+        </div>
 
-    <h2>💳 Pedidos e Pagamentos</h2>
+        <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
+            <button class="btn-excluir" type="submit">✖</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
 
     <table>
         <tr>
@@ -228,4 +256,5 @@
 </div>
 
 {% endblock %}
+
 

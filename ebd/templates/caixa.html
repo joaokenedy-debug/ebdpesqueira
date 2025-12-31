@@ -15,6 +15,7 @@
         color: #333;
     }
 
+    /* ===== Cards do topo ===== */
     .cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -45,6 +46,7 @@
     .saldo { color: #1f6feb; }
     .receber { color: #e5533d; }
 
+    /* ===== Form ===== */
     form {
         display: flex;
         gap: 8px;
@@ -79,6 +81,49 @@
         background: #b02a37;
     }
 
+    /* ===== Verbas horizontal ===== */
+    .bloco-verbas,
+    .bloco-pedidos {
+        width: 100%;
+        display: block;
+        margin-bottom: 25px;
+        clear: both;
+    }
+
+    .verbas-horizontal {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .verba-card {
+        background: #fff;
+        padding: 10px 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 240px;
+    }
+
+    .verba-card strong {
+        font-size: 13px;
+    }
+
+    .verba-card small {
+        font-size: 11px;
+        color: #666;
+    }
+
+    .verba-valor {
+        font-weight: bold;
+        color: #198754;
+        margin-left: auto;
+        white-space: nowrap;
+    }
+
+    /* ===== Tabela ===== */
     table {
         width: 100%;
         border-collapse: collapse;
@@ -105,6 +150,7 @@
         background: #fafafa;
     }
 
+    /* ===== Status ===== */
     .status {
         padding: 4px 10px;
         border-radius: 12px;
@@ -122,52 +168,11 @@
         background: #f8d7da;
         color: #842029;
     }
-
-    @media (max-width: 768px) {
-        th, td {
-            font-size: 12px;
-            padding: 6px;
-        }
-    }
-    .verbas-horizontal {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 25px;
-}
-
-.verba-card {
-    background: #fff;
-    padding: 10px 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    min-width: 240px;
-}
-
-.verba-card strong {
-    font-size: 13px;
-}
-
-.verba-card small {
-    font-size: 11px;
-    color: #666;
-}
-
-.verba-valor {
-    font-weight: bold;
-    color: #198754;
-    margin-left: auto;
-    white-space: nowrap;
-}
-
 </style>
-
 
 <div class="container">
 
+    <!-- ===== TOPO ===== -->
     <h2>📦 Caixa Geral</h2>
 
     <div class="cards">
@@ -182,6 +187,7 @@
         </div>
     </div>
 
+    <!-- ===== ADICIONAR VERBA ===== -->
     <h2>➕ Adicionar Verba</h2>
 
     <form method="POST" action="{{ url_for('adicionar_verba') }}">
@@ -190,71 +196,76 @@
         <button type="submit">Adicionar</button>
     </form>
 
-    <h2>📑 Verbas Adicionadas</h2>
+    <!-- ===== VERBAS ===== -->
+    <div class="bloco-verbas">
+        <h2>📑 Verbas Adicionadas</h2>
 
-<div class="verbas-horizontal">
-    {% for v in caixa %}
-    <div class="verba-card">
-        <div>
-            <strong>{{ v.descricao }}</strong><br>
-            <small>{{ v.data.strftime("%d/%m/%Y") }}</small>
-        </div>
+        <div class="verbas-horizontal">
+            {% for v in caixa %}
+            <div class="verba-card">
+                <div>
+                    <strong>{{ v.descricao }}</strong><br>
+                    <small>{{ v.data.strftime("%d/%m/%Y") }}</small>
+                </div>
 
-        <div class="verba-valor">
-            R$ {{ "%.2f"|format(v.valor) }}
-        </div>
+                <div class="verba-valor">
+                    R$ {{ "%.2f"|format(v.valor) }}
+                </div>
 
-        <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
-            <button class="btn-excluir" type="submit">✖</button>
-        </form>
-    </div>
-    {% endfor %}
-</div>
-
-
-    <table>
-        <tr>
-            <th>ID Pedido</th>
-            <th>Congregação</th>
-            <th>Total</th>
-            <th>Pago</th>
-            <th>Restante</th>
-            <th>Status</th>
-            <th>Pagamento</th>
-        </tr>
-
-        {% for p in pedidos %}
-        <tr>
-            <td>{{ p.id }}</td>
-            <td>{{ p.congregacao }}</td>
-            <td>R$ {{ "%.2f"|format(p.total) }}</td>
-            <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
-            <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
-
-            <td>
-                {% if p.quitado %}
-                    <span class="status quitado">✔ Quitado</span>
-                {% else %}
-                    <span class="status pendente">⏳ Pendente</span>
-                {% endif %}
-            </td>
-
-            <td>
-                {% if not p.quitado %}
-                <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
-                    <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
-                    <button type="submit">Pagar</button>
+                <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
+                    <button class="btn-excluir" type="submit">✖</button>
                 </form>
-                {% else %}
-                    —
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ===== PEDIDOS ===== -->
+    <div class="bloco-pedidos">
+        <h2>💳 Pedidos e Pagamentos</h2>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Congregação</th>
+                <th>Total</th>
+                <th>Pago</th>
+                <th>Restante</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+            </tr>
+
+            {% for p in pedidos %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.congregacao }}</td>
+                <td>R$ {{ "%.2f"|format(p.total) }}</td>
+                <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
+                <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
+
+                <td>
+                    {% if p.quitado %}
+                        <span class="status quitado">✔ Quitado</span>
+                    {% else %}
+                        <span class="status pendente">⏳ Pendente</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {% if not p.quitado %}
+                    <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
+                        <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
+                        <button type="submit">Pagar</button>
+                    </form>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
 
 </div>
 
 {% endblock %}
-
-

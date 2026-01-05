@@ -636,23 +636,18 @@ def registrar_pagamento(id_pedido):
         flash("Valor inválido!", "danger")
         return redirect(url_for("caixa"))
 
-    saldo_atual = pedido.saldo_restante
-
-    if valor > saldo_atual:
+    if valor > pedido.saldo_restante:
         flash("Valor maior que o saldo restante!", "danger")
         return redirect(url_for("caixa"))
 
-    # 1️⃣ registra pagamento
+    # 1️⃣ registra o pagamento
     pagamento = Pagamento(
         id_pedido=pedido.id,
         valor_pago=valor
     )
     database.session.add(pagamento)
 
-    # 2️⃣ atualiza o campo REAL
-    pedido.valor_pago += valor
-
-    # 3️⃣ adiciona no caixa
+    # 2️⃣ registra entrada no caixa
     caixa = Caixa(
         descricao=f"Pagamento pedido #{pedido.id}",
         valor=valor
@@ -663,6 +658,7 @@ def registrar_pagamento(id_pedido):
 
     flash("Pagamento registrado com sucesso!", "success")
     return redirect(url_for("caixa"))
+
 
 
 TOTAL_VISITAS = 0
@@ -691,6 +687,7 @@ def injetar_stats():
         total_visitas=TOTAL_VISITAS,
         online=len(usuarios_online)
     )
+
 
 
 

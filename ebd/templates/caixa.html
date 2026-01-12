@@ -22,7 +22,7 @@ body {
     font-size: 14px;
 }
 
-/* ===== TOPO ===== */
+/* ===== RESUMO ===== */
 .resumo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -68,9 +68,10 @@ body {
 
 .box h3 {
     font-size: 15px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
+/* ===== FORM ===== */
 .form-inline {
     display: flex;
     gap: 8px;
@@ -98,16 +99,10 @@ button {
     background: var(--vermelho);
 }
 
-/* ===== CORPO ===== */
-.corpo {
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 20px;
-}
-
 /* ===== MOVIMENTAÇÃO ===== */
 .movimentacao {
-    max-height: 520px;
+    margin-bottom: 20px;
+    max-height: 380px;
     overflow-y: auto;
 }
 
@@ -132,7 +127,7 @@ button {
     font-weight: bold;
 }
 
-/* ===== TABELA ===== */
+/* ===== TABELA PEDIDOS ===== */
 .pedidos {
     overflow-x: auto;
 }
@@ -184,7 +179,6 @@ tr:nth-child(even) {
             <h4>Saldo em Caixa</h4>
             <p class="saldo">R$ {{ "%.2f"|format(saldo_caixa) }}</p>
         </div>
-
         <div class="resumo-card">
             <h4>Total a Receber</h4>
             <p class="receber">R$ {{ "%.2f"|format(total_receber) }}</p>
@@ -212,72 +206,67 @@ tr:nth-child(even) {
         </div>
     </div>
 
-    <!-- ===== CORPO ===== -->
-    <div class="corpo">
-
-        <!-- MOVIMENTAÇÃO -->
-        <div class="box movimentacao">
-            <h3>📊 Movimentação do Caixa</h3>
-            {% for c in caixa %}
-            <div class="mov-item">
-                <div>
-                    <strong>{{ c.descricao }}</strong><br>
-                    <small>{{ c.data.strftime("%d/%m/%Y") }}</small>
-                </div>
-                <div class="{{ 'valor-positivo' if c.valor >= 0 else 'valor-negativo' }}">
-                    R$ {{ "%.2f"|format(c.valor) }}
-                </div>
+    <!-- ===== MOVIMENTAÇÃO ===== -->
+    <div class="box movimentacao">
+        <h3>📊 Movimentação do Caixa</h3>
+        {% for c in caixa %}
+        <div class="mov-item">
+            <div>
+                <strong>{{ c.descricao }}</strong><br>
+                <small>{{ c.data.strftime("%d/%m/%Y") }}</small>
             </div>
+            <div class="{{ 'valor-positivo' if c.valor >= 0 else 'valor-negativo' }}">
+                R$ {{ "%.2f"|format(c.valor) }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ===== PEDIDOS (EMBAIXO, 100%) ===== -->
+    <div class="box pedidos">
+        <h3>💳 Pagamentos de Pedidos</h3>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Congregação</th>
+                <th>Total</th>
+                <th>Pago</th>
+                <th>Restante</th>
+                <th>Status</th>
+                <th>Pagar</th>
+            </tr>
+
+            {% for p in pedidos %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.congregacao }}</td>
+                <td>R$ {{ "%.2f"|format(p.total) }}</td>
+                <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
+                <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
+                <td>
+                    {% if p.quitado %}
+                        <span class="status quitado">Quitado</span>
+                    {% else %}
+                        <span class="status pendente">Pendente</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not p.quitado %}
+                    <form method="POST"
+                          action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}"
+                          style="display:flex; gap:6px; justify-content:center;">
+                        <input type="number" step="0.01" name="valor_pago"
+                               placeholder="Valor" required style="width:90px;">
+                        <button type="submit">OK</button>
+                    </form>
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+            </tr>
             {% endfor %}
-        </div>
-
-        <!-- PEDIDOS -->
-        <div class="box pedidos">
-            <h3>💳 Pagamentos de Pedidos</h3>
-
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Congregação</th>
-                    <th>Total</th>
-                    <th>Pago</th>
-                    <th>Restante</th>
-                    <th>Status</th>
-                    <th>Pagar</th>
-                </tr>
-
-                {% for p in pedidos %}
-                <tr>
-                    <td>{{ p.id }}</td>
-                    <td>{{ p.congregacao }}</td>
-                    <td>R$ {{ "%.2f"|format(p.total) }}</td>
-                    <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
-                    <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
-                    <td>
-                        {% if p.quitado %}
-                            <span class="status quitado">Quitado</span>
-                        {% else %}
-                            <span class="status pendente">Pendente</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if not p.quitado %}
-                        <form method="POST"
-                              action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}"
-                              style="display:flex; gap:6px; justify-content:center;">
-                            <input type="number" step="0.01" name="valor_pago"
-                                   placeholder="Valor" required style="width:90px;">
-                            <button type="submit">OK</button>
-                        </form>
-                        {% else %}
-                        —
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-
+        </table>
     </div>
 
 </div>

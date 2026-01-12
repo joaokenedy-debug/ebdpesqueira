@@ -21,7 +21,7 @@ h2 {
 ===================================================== */
 .dashboard {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 2.6fr;
     grid-template-rows: auto auto 1fr;
     gap: 16px;
 }
@@ -236,6 +236,13 @@ tr:nth-child(even) {
         height: auto;
     }
 }
+   .pedidos {
+    overflow-x: auto;   /* scroll horizontal se precisar */
+}
+
+.pedidos table {
+    min-width: 720px;   /* largura mínima segura */
+}
 </style>
 
 <div class="container">
@@ -337,3 +344,4 @@ tr:nth-child(even) {
 </div>
 
 {% endblock %}
+

@@ -2,68 +2,75 @@
 {% block body %}
 
 <style>
-:root {
-    --azul: #2563eb;
-    --verde: #16a34a;
-    --vermelho: #dc2626;
-    --cinza: #6b7280;
-    --bg: #f3f4f6;
+/* =========================
+   RESET E BASE
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* ===== BASE ===== */
 body {
-    background: var(--bg);
+    font-family: "Inter", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #2c2c2c;
 }
 
 .container {
-    max-width: 1500px;
+    width: 100%;
+    max-width: 1200px;
     margin: auto;
     padding: 16px;
-    font-size: 14px;
 }
 
-/* ===== RESUMO ===== */
-.resumo {
+/* =========================
+   GRID PRINCIPAL
+========================= */
+.dashboard {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: 1fr;
     gap: 16px;
-    margin-bottom: 20px;
+}
+
+/* =========================
+   CARDS DE RESUMO
+========================= */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 }
 
 .resumo-card {
-    background: #fff;
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,.06);
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
 }
 
 .resumo-card h4 {
-    font-size: 13px;
-    color: var(--cinza);
+    font-size: 14px;
+    color: #777;
     margin-bottom: 6px;
 }
 
 .resumo-card p {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: bold;
 }
 
-.saldo { color: var(--azul); }
-.receber { color: #ea580c; }
+.positivo { color: #16a34a; }
+.negativo { color: #dc2626; }
 
-/* ===== LANÇAMENTOS ===== */
-.lancamentos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
+/* =========================
+   BOX PADRÃO
+========================= */
 .box {
-    background: #fff;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,.06);
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
 }
 
 .box h3 {
@@ -71,104 +78,165 @@ body {
     margin-bottom: 12px;
 }
 
-/* ===== FORM ===== */
-.form-inline {
-    display: flex;
-    gap: 8px;
+/* =========================
+   LANÇAMENTOS
+========================= */
+.lancamentos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
 }
 
-input, button {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #d1d5db;
-    font-size: 13px;
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+input, select, button {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
 }
 
 input {
     flex: 1;
+    min-width: 140px;
 }
 
 button {
-    background: var(--azul);
-    color: #fff;
+    background: #2563eb;
+    color: white;
     border: none;
     cursor: pointer;
+    transition: 0.2s;
 }
 
-.btn-despesa {
-    background: var(--vermelho);
+button:hover {
+    background: #1e40af;
 }
 
-/* ===== MOVIMENTAÇÃO ===== */
+.btn-danger {
+    background: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #991b1b;
+}
+
+/* =========================
+   MOVIMENTAÇÃO DO CAIXA
+========================= */
 .movimentacao {
-    margin-bottom: 20px;
-    max-height: 380px;
+    max-height: 280px;
     overflow-y: auto;
 }
 
 .mov-item {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
 }
 
-.mov-item small {
-    color: var(--cinza);
+.mov-item:last-child {
+    border-bottom: none;
 }
 
-.valor-positivo {
-    color: var(--verde);
-    font-weight: bold;
-}
-
-.valor-negativo {
-    color: var(--vermelho);
-    font-weight: bold;
-}
-
-/* ===== TABELA PEDIDOS ===== */
-.pedidos {
+/* =========================
+   TABELAS
+========================= */
+.table-container {
+    width: 100%;
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-    min-width: 900px;
     border-collapse: collapse;
+    min-width: 700px;
+}
+
+thead {
+    background: #f1f5f9;
 }
 
 th, td {
     padding: 10px;
-    text-align: center;
-    white-space: nowrap;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
 }
 
-th {
-    background: #f9fafb;
-    font-size: 13px;
-}
-
-tr:nth-child(even) {
-    background: #f9fafb;
-}
-
-.status {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+.status-aberto {
+    color: #dc2626;
     font-weight: bold;
 }
 
-.quitado {
-    background: #dcfce7;
-    color: #166534;
+.status-quitado {
+    color: #16a34a;
+    font-weight: bold;
 }
 
-.pendente {
-    background: #fee2e2;
-    color: #7f1d1d;
+/* =========================
+   PAGAMENTO DE PEDIDOS
+========================= */
+.pedidos form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+
+.pedidos input {
+    max-width: 120px;
+}
+
+/* =========================
+   SCROLL PERSONALIZADO
+========================= */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* =========================
+   DESKTOP (>=1024px)
+========================= */
+@media (min-width: 1024px) {
+
+    .container {
+        max-width: 1400px;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .cards {
+        grid-column: span 2;
+    }
+
+    .lancamentos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .movimentacao {
+        max-height: 320px;
+    }
+
+    /* TABELA DE PEDIDOS EMBAIXO OCUPANDO TUDO */
+    .pedidos {
+        grid-column: span 2;
+    }
+}
+
 </style>
 
 <div class="container">
@@ -272,3 +340,4 @@ tr:nth-child(even) {
 </div>
 
 {% endblock %}
+

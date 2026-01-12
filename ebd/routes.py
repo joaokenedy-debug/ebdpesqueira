@@ -666,23 +666,26 @@ def registrar_pagamento(id_pedido):
 @app.route("/adicionar_despesa", methods=["POST"])
 @login_required
 def adicionar_despesa():
-    descricao = request.form["descricao"]
-    valor = float(request.form["valor"])
+    if not current_user.is_admin:
+        return "Acesso negado", 403
 
-    # garante que sempre seja negativo
+    valor = float(request.form["valor"])
+    descricao = request.form["descricao"]
+
+    # garante que a despesa seja sempre negativa
     valor = -abs(valor)
 
     nova_despesa = Caixa(
         descricao=descricao,
-        valor=valor,
-        data=datetime.now()
+        valor=valor
     )
 
-    db.session.add(nova_despesa)
-    db.session.commit()
+    database.session.add(nova_despesa)
+    database.session.commit()
 
-    flash("Despesa adicionada com sucesso!", "success")
+    flash("Despesa adicionada com sucesso!", "danger")
     return redirect(url_for("caixa"))
+
 
 TOTAL_VISITAS = 0
 usuarios_online = {}
@@ -709,6 +712,7 @@ def injetar_stats():
         total_visitas=TOTAL_VISITAS,
         online=len(usuarios_online)
     )
+
 
 
 

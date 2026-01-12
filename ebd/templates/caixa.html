@@ -13,8 +13,8 @@
 
 body {
     font-family: "Inter", Arial, sans-serif;
-    background: #f4f6f9;
-    color: #2c2c2c;
+    background: linear-gradient(180deg, #f4f6f9, #eef1f5);
+    color: #1f2937;
 }
 
 .container {
@@ -34,48 +34,63 @@ body {
 }
 
 /* =========================
-   CARDS DE RESUMO
+   RESUMO / CARDS
 ========================= */
-.cards {
+.resumo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
 }
 
 .resumo-card {
-    background: white;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    border-left: 6px solid transparent;
+}
+
+.resumo-card:nth-child(1) {
+    border-color: #16a34a;
+}
+
+.resumo-card:nth-child(2) {
+    border-color: #2563eb;
 }
 
 .resumo-card h4 {
-    font-size: 14px;
-    color: #777;
+    font-size: 13px;
+    color: #6b7280;
     margin-bottom: 6px;
 }
 
 .resumo-card p {
-    font-size: 28px;
-    font-weight: bold;
+    font-size: 30px;
+    font-weight: 800;
 }
 
-.positivo { color: #16a34a; }
-.negativo { color: #dc2626; }
+.saldo {
+    color: #16a34a;
+}
+
+.receber {
+    color: #2563eb;
+}
 
 /* =========================
    BOX PADRÃO
 ========================= */
 .box {
-    background: white;
-    border-radius: 14px;
-    padding: 18px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
 }
 
 .box h3 {
     font-size: 15px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    color: #111827;
 }
 
 /* =========================
@@ -93,10 +108,10 @@ form {
     gap: 10px;
 }
 
-input, select, button {
+input, button {
     padding: 10px 12px;
     border-radius: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #d1d5db;
     font-size: 14px;
 }
 
@@ -105,24 +120,25 @@ input {
     min-width: 140px;
 }
 
+input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
 button {
-    background: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: white;
     border: none;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
 }
 
 button:hover {
-    background: #1e40af;
+    filter: brightness(1.1);
 }
 
-.btn-danger {
-    background: #dc2626;
-}
-
-.btn-danger:hover {
-    background: #991b1b;
+.btn-despesa {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
 /* =========================
@@ -136,8 +152,9 @@ button:hover {
 .mov-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px dashed #e5e7eb;
     font-size: 14px;
 }
 
@@ -145,8 +162,18 @@ button:hover {
     border-bottom: none;
 }
 
+.valor-positivo {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.valor-negativo {
+    color: #dc2626;
+    font-weight: 700;
+}
+
 /* =========================
-   TABELAS
+   TABELA DE PEDIDOS
 ========================= */
 .table-container {
     width: 100%;
@@ -156,28 +183,48 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 700px;
+    min-width: 800px;
 }
 
 thead {
-    background: #f1f5f9;
+    background: linear-gradient(135deg, #f1f5f9, #e5e7eb);
 }
 
-th, td {
+th {
+    padding: 12px;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #374151;
+}
+
+td {
     padding: 10px;
-    text-align: left;
     font-size: 14px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.status-aberto {
-    color: #dc2626;
+tr:hover td {
+    background: #f9fafb;
+}
+
+/* =========================
+   STATUS
+========================= */
+.status {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
     font-weight: bold;
 }
 
-.status-quitado {
-    color: #16a34a;
-    font-weight: bold;
+.quitado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.pendente {
+    background: #fee2e2;
+    color: #991b1b;
 }
 
 /* =========================
@@ -185,20 +232,19 @@ th, td {
 ========================= */
 .pedidos form {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 6px;
+    justify-content: center;
 }
 
 .pedidos input {
-    max-width: 120px;
+    max-width: 90px;
 }
 
 /* =========================
-   SCROLL PERSONALIZADO
+   SCROLL
 ========================= */
 ::-webkit-scrollbar {
     width: 6px;
-    height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -207,7 +253,7 @@ th, td {
 }
 
 /* =========================
-   DESKTOP (>=1024px)
+   DESKTOP
 ========================= */
 @media (min-width: 1024px) {
 
@@ -219,24 +265,14 @@ th, td {
         grid-template-columns: 1fr 1fr;
     }
 
-    .cards {
-        grid-column: span 2;
-    }
-
     .lancamentos {
         grid-template-columns: 1fr 1fr;
     }
 
-    .movimentacao {
-        max-height: 320px;
-    }
-
-    /* TABELA DE PEDIDOS EMBAIXO OCUPANDO TUDO */
     .pedidos {
         grid-column: span 2;
     }
 }
-
 </style>
 
 <div class="container">
@@ -257,7 +293,7 @@ th, td {
     <div class="lancamentos">
         <div class="box">
             <h3>➕ Adicionar Verba</h3>
-            <form method="POST" action="{{ url_for('adicionar_verba') }}" class="form-inline">
+            <form method="POST" action="{{ url_for('adicionar_verba') }}">
                 <input type="text" name="descricao" placeholder="Descrição" required>
                 <input type="number" step="0.01" name="valor" placeholder="Valor" required>
                 <button type="submit">Adicionar</button>
@@ -266,7 +302,7 @@ th, td {
 
         <div class="box">
             <h3>➖ Adicionar Despesa</h3>
-            <form method="POST" action="{{ url_for('adicionar_despesa') }}" class="form-inline">
+            <form method="POST" action="{{ url_for('adicionar_despesa') }}">
                 <input type="text" name="descricao" placeholder="Descrição" required>
                 <input type="number" step="0.01" name="valor" placeholder="Valor" required>
                 <button class="btn-despesa" type="submit">Lançar</button>
@@ -290,10 +326,9 @@ th, td {
         {% endfor %}
     </div>
 
-    <!-- ===== PEDIDOS (EMBAIXO, 100%) ===== -->
+    <!-- ===== PEDIDOS ===== -->
     <div class="box pedidos">
         <h3>💳 Pagamentos de Pedidos</h3>
-
         <table>
             <tr>
                 <th>ID</th>
@@ -304,7 +339,6 @@ th, td {
                 <th>Status</th>
                 <th>Pagar</th>
             </tr>
-
             {% for p in pedidos %}
             <tr>
                 <td>{{ p.id }}</td>
@@ -321,16 +355,11 @@ th, td {
                 </td>
                 <td>
                     {% if not p.quitado %}
-                    <form method="POST"
-                          action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}"
-                          style="display:flex; gap:6px; justify-content:center;">
-                        <input type="number" step="0.01" name="valor_pago"
-                               placeholder="Valor" required style="width:90px;">
+                    <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
+                        <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
                         <button type="submit">OK</button>
                     </form>
-                    {% else %}
-                    —
-                    {% endif %}
+                    {% else %} — {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -340,4 +369,3 @@ th, td {
 </div>
 
 {% endblock %}
-

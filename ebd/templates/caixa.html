@@ -3,183 +3,230 @@
 {% block body %}
 
 <style>
-    .container {
-        max-width: 1100px;
-        margin: auto;
-        font-size: 14px;
-    }
+/* =====================================================
+   LAYOUT GERAL
+===================================================== */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    font-size: 14px;
+}
 
-    h2 {
-        margin: 20px 0 10px;
-        font-size: 18px;
-        color: #333;
-    }
+h2 {
+    margin: 18px 0 10px;
+    font-size: 17px;
+    color: #333;
+}
 
-    /* ===== Cards do topo ===== */
-    .cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 12px;
-        margin-bottom: 20px;
-    }
+/* =====================================================
+   CARDS DO TOPO
+===================================================== */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
 
-    .card {
-        background: #fff;
-        padding: 14px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
+.card {
+    background: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
 
-    .card h3 {
-        margin: 0;
-        font-size: 13px;
-        color: #666;
-        font-weight: 600;
-    }
+.card h3 {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}
 
-    .card p {
-        font-size: 20px;
-        font-weight: bold;
-        margin-top: 6px;
-    }
+.card p {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 6px;
+}
 
-    .saldo { color: #1f6feb; }
-    .receber { color: #e5533d; }
+.saldo   { color: #1f6feb; }
+.receber { color: #e5533d; }
 
-    /* ===== Form ===== */
-    form {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 14px;
-    }
+/* =====================================================
+   FORMULÁRIOS (VERBA / DESPESA)
+===================================================== */
+.forms-linha {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
 
-    input, button {
-        padding: 6px 8px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 13px;
-    }
+.form-card {
+    background: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
 
-    button {
-        background: #1f6feb;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-    }
+.form-card h2 {
+    margin-top: 0;
+    font-size: 15px;
+}
 
-    button:hover {
-        background: #174ea6;
-    }
+.form-card form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
 
-    .btn-excluir {
-        background: #dc3545;
-        padding: 5px 8px;
-    }
+.form-card input {
+    height: 34px;
+    padding: 6px 8px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
 
-    .btn-excluir:hover {
-        background: #b02a37;
-    }
+.form-card input[type="text"] {
+    flex: 1;
+    min-width: 160px;
+}
 
-    .btn-despesa {
-        background: #dc3545;
-    }
+.form-card input[type="number"] {
+    width: 110px;
+}
 
-    .btn-despesa:hover {
-        background: #b02a37;
-    }
+.form-card button {
+    height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #1f6feb;
+    color: #fff;
+}
 
-    /* ===== Verbas / Despesas ===== */
-    .bloco-verbas,
-    .bloco-pedidos {
-        margin-bottom: 25px;
-    }
+.form-card button:hover {
+    background: #174ea6;
+}
 
-    .verbas-horizontal {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
+.btn-despesa {
+    background: #dc3545 !important;
+}
 
-    .verba-card {
-        background: #fff;
-        padding: 10px 12px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        min-width: 240px;
-    }
+.btn-despesa:hover {
+    background: #b02a37 !important;
+}
 
-    .card-despesa {
-        border-left: 4px solid #dc3545;
-    }
+/* =====================================================
+   MOVIMENTAÇÕES (VERBAS / DESPESAS)
+===================================================== */
+.bloco-verbas {
+    margin-bottom: 30px;
+}
 
-    .verba-card strong {
-        font-size: 13px;
-    }
+.verbas-horizontal {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-    .verba-card small {
-        font-size: 11px;
-        color: #666;
-    }
+.verba-card {
+    background: #fff;
+    padding: 10px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,.08);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 240px;
+}
 
-    .verba-valor {
-        font-weight: bold;
-        color: #198754;
-        margin-left: auto;
-    }
+.card-despesa {
+    border-left: 4px solid #dc3545;
+}
 
-    .despesa-valor {
-        font-weight: bold;
-        color: #dc3545;
-        margin-left: auto;
-    }
+.verba-card strong {
+    font-size: 13px;
+}
 
-    /* ===== Tabela ===== */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #fff;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+.verba-card small {
+    font-size: 11px;
+    color: #666;
+}
 
-    th, td {
-        padding: 8px;
-        text-align: center;
-        white-space: nowrap;
-    }
+.verba-valor {
+    margin-left: auto;
+    font-weight: bold;
+    color: #198754;
+}
 
-    th {
-        background: #f3f4f6;
-        font-weight: 600;
-        font-size: 13px;
-    }
+.despesa-valor {
+    margin-left: auto;
+    font-weight: bold;
+    color: #dc3545;
+}
 
-    tr:nth-child(even) {
-        background: #fafafa;
-    }
+.btn-excluir {
+    background: #dc3545;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: #fff;
+    cursor: pointer;
+}
 
-    /* ===== Status ===== */
-    .status {
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: bold;
-    }
+.btn-excluir:hover {
+    background: #b02a37;
+}
 
-    .quitado {
-        background: #d1e7dd;
-        color: #0f5132;
-    }
+/* =====================================================
+   TABELA DE PEDIDOS
+===================================================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
 
-    .pendente {
-        background: #f8d7da;
-        color: #842029;
-    }
+th, td {
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+th {
+    background: #f3f4f6;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.quitado {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.pendente {
+    background: #f8d7da;
+    color: #842029;
+}
 </style>
 
 <div class="container">
@@ -199,23 +246,30 @@
         </div>
     </div>
 
-    <!-- ===== ADICIONAR VERBA ===== -->
-    <h2>➕ Adicionar Verba</h2>
-    <form method="POST" action="{{ url_for('adicionar_verba') }}">
-        <input type="text" name="descricao" placeholder="Descrição" required>
-        <input type="number" step="0.01" name="valor" placeholder="Valor" required>
-        <button type="submit">Adicionar</button>
-    </form>
+    <!-- ===== FORMULÁRIOS ===== -->
+    <div class="forms-linha">
 
-    <!-- ===== ADICIONAR DESPESA ===== -->
-    <h2>➖ Adicionar Despesa</h2>
-    <form method="POST" action="{{ url_for('adicionar_despesa') }}">
-        <input type="text" name="descricao" placeholder="Descrição da despesa" required>
-        <input type="number" step="0.01" name="valor" placeholder="Valor" required>
-        <button type="submit" class="btn-despesa">Adicionar Despesa</button>
-    </form>
+        <div class="form-card">
+            <h2>➕ Adicionar Verba</h2>
+            <form method="POST" action="{{ url_for('adicionar_verba') }}">
+                <input type="text" name="descricao" placeholder="Descrição" required>
+                <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
 
-    <!-- ===== VERBAS E DESPESAS ===== -->
+        <div class="form-card">
+            <h2>➖ Adicionar Despesa</h2>
+            <form method="POST" action="{{ url_for('adicionar_despesa') }}">
+                <input type="text" name="descricao" placeholder="Descrição" required>
+                <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+                <button type="submit" class="btn-despesa">Adicionar</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- ===== MOVIMENTAÇÕES ===== -->
     <div class="bloco-verbas">
         <h2>📑 Movimentações do Caixa</h2>
 

@@ -2,130 +2,160 @@
 {% block body %}
 
 <style>
-/* ===== CONTAINER ===== */
+:root {
+    --azul: #2563eb;
+    --verde: #16a34a;
+    --vermelho: #dc2626;
+    --cinza: #6b7280;
+    --bg: #f3f4f6;
+}
+
+/* ===== BASE ===== */
+body {
+    background: var(--bg);
+}
+
 .container {
-    max-width: 1400px;
+    max-width: 1500px;
     margin: auto;
+    padding: 16px;
     font-size: 14px;
 }
 
-/* ===== GRID PRINCIPAL ===== */
-.dashboard {
+/* ===== TOPO ===== */
+.resumo {
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr;
-    grid-template-areas:
-        "cards cards cards"
-        "verba despesa despesa"
-        "mov pedidos pedidos";
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 16px;
+    margin-bottom: 20px;
 }
 
-/* ===== ÁREAS ===== */
-.cards { grid-area: cards; }
-.verba { grid-area: verba; }
-.despesa { grid-area: despesa; }
-.movimentacao { grid-area: mov; }
-.pedidos { grid-area: pedidos; }
-
-/* ===== CARDS ===== */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-}
-
-.card {
+.resumo-card {
     background: #fff;
-    padding: 14px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.06);
 }
 
-.card h3 {
+.resumo-card h4 {
     font-size: 13px;
-    color: #666;
+    color: var(--cinza);
+    margin-bottom: 6px;
 }
 
-.card p {
-    font-size: 22px;
+.resumo-card p {
+    font-size: 26px;
     font-weight: bold;
-    margin-top: 6px;
 }
 
-.saldo { color: #1f6feb; }
-.receber { color: #e5533d; }
+.saldo { color: var(--azul); }
+.receber { color: #ea580c; }
 
-/* ===== BOX ===== */
+/* ===== LANÇAMENTOS ===== */
+.lancamentos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
 .box {
     background: #fff;
-    padding: 14px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,.06);
 }
 
-/* ===== FORM ===== */
+.box h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
 .form-inline {
     display: flex;
     gap: 8px;
 }
 
 input, button {
-    padding: 6px 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
     font-size: 13px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+}
+
+input {
+    flex: 1;
 }
 
 button {
-    background: #1f6feb;
+    background: var(--azul);
     color: #fff;
     border: none;
     cursor: pointer;
 }
 
 .btn-despesa {
-    background: #dc3545;
+    background: var(--vermelho);
+}
+
+/* ===== CORPO ===== */
+.corpo {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 20px;
 }
 
 /* ===== MOVIMENTAÇÃO ===== */
 .movimentacao {
-    max-height: 420px;
+    max-height: 520px;
     overflow-y: auto;
 }
 
 .mov-item {
     display: flex;
     justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.mov-item .positivo { color: #198754; font-weight: bold; }
-.mov-item .negativo { color: #dc3545; font-weight: bold; }
+.mov-item small {
+    color: var(--cinza);
+}
 
-/* ===== PEDIDOS ===== */
+.valor-positivo {
+    color: var(--verde);
+    font-weight: bold;
+}
+
+.valor-negativo {
+    color: var(--vermelho);
+    font-weight: bold;
+}
+
+/* ===== TABELA ===== */
 .pedidos {
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-    min-width: 820px;
+    min-width: 900px;
     border-collapse: collapse;
 }
 
 th, td {
-    padding: 8px;
+    padding: 10px;
     text-align: center;
     white-space: nowrap;
 }
 
 th {
-    background: #f3f4f6;
+    background: #f9fafb;
+    font-size: 13px;
 }
 
 tr:nth-child(even) {
-    background: #fafafa;
+    background: #f9fafb;
 }
 
 .status {
@@ -136,34 +166,34 @@ tr:nth-child(even) {
 }
 
 .quitado {
-    background: #d1e7dd;
-    color: #0f5132;
+    background: #dcfce7;
+    color: #166534;
 }
 
 .pendente {
-    background: #f8d7da;
-    color: #842029;
+    background: #fee2e2;
+    color: #7f1d1d;
 }
 </style>
 
 <div class="container">
 
-    <div class="dashboard">
-
-        <!-- ===== CARDS ===== -->
-        <div class="cards">
-            <div class="card">
-                <h3>Saldo no Caixa</h3>
-                <p class="saldo">R$ {{ "%.2f"|format(saldo_caixa) }}</p>
-            </div>
-            <div class="card">
-                <h3>Total a Receber</h3>
-                <p class="receber">R$ {{ "%.2f"|format(total_receber) }}</p>
-            </div>
+    <!-- ===== RESUMO ===== -->
+    <div class="resumo">
+        <div class="resumo-card">
+            <h4>Saldo em Caixa</h4>
+            <p class="saldo">R$ {{ "%.2f"|format(saldo_caixa) }}</p>
         </div>
 
-        <!-- ===== ADICIONAR VERBA ===== -->
-        <div class="box verba">
+        <div class="resumo-card">
+            <h4>Total a Receber</h4>
+            <p class="receber">R$ {{ "%.2f"|format(total_receber) }}</p>
+        </div>
+    </div>
+
+    <!-- ===== LANÇAMENTOS ===== -->
+    <div class="lancamentos">
+        <div class="box">
             <h3>➕ Adicionar Verba</h3>
             <form method="POST" action="{{ url_for('adicionar_verba') }}" class="form-inline">
                 <input type="text" name="descricao" placeholder="Descrição" required>
@@ -172,32 +202,39 @@ tr:nth-child(even) {
             </form>
         </div>
 
-        <!-- ===== ADICIONAR DESPESA ===== -->
-        <div class="box despesa">
+        <div class="box">
             <h3>➖ Adicionar Despesa</h3>
             <form method="POST" action="{{ url_for('adicionar_despesa') }}" class="form-inline">
                 <input type="text" name="descricao" placeholder="Descrição" required>
                 <input type="number" step="0.01" name="valor" placeholder="Valor" required>
-                <button type="submit" class="btn-despesa">Lançar</button>
+                <button class="btn-despesa" type="submit">Lançar</button>
             </form>
         </div>
+    </div>
 
-        <!-- ===== MOVIMENTAÇÃO DO CAIXA ===== -->
+    <!-- ===== CORPO ===== -->
+    <div class="corpo">
+
+        <!-- MOVIMENTAÇÃO -->
         <div class="box movimentacao">
             <h3>📊 Movimentação do Caixa</h3>
             {% for c in caixa %}
             <div class="mov-item">
-                <span>{{ c.descricao }}</span>
-                <span class="{{ 'positivo' if c.valor >= 0 else 'negativo' }}">
+                <div>
+                    <strong>{{ c.descricao }}</strong><br>
+                    <small>{{ c.data.strftime("%d/%m/%Y") }}</small>
+                </div>
+                <div class="{{ 'valor-positivo' if c.valor >= 0 else 'valor-negativo' }}">
                     R$ {{ "%.2f"|format(c.valor) }}
-                </span>
+                </div>
             </div>
             {% endfor %}
         </div>
 
-        <!-- ===== PAGAMENTO DE PEDIDOS ===== -->
+        <!-- PEDIDOS -->
         <div class="box pedidos">
-            <h3>💳 Pagamento de Pedidos</h3>
+            <h3>💳 Pagamentos de Pedidos</h3>
+
             <table>
                 <tr>
                     <th>ID</th>
@@ -206,7 +243,7 @@ tr:nth-child(even) {
                     <th>Pago</th>
                     <th>Restante</th>
                     <th>Status</th>
-                    <th>Pagamento</th>
+                    <th>Pagar</th>
                 </tr>
 
                 {% for p in pedidos %}
@@ -230,10 +267,10 @@ tr:nth-child(even) {
                               style="display:flex; gap:6px; justify-content:center;">
                             <input type="number" step="0.01" name="valor_pago"
                                    placeholder="Valor" required style="width:90px;">
-                            <button type="submit">Pagar</button>
+                            <button type="submit">OK</button>
                         </form>
                         {% else %}
-                            —
+                        —
                         {% endif %}
                     </td>
                 </tr>
@@ -242,6 +279,7 @@ tr:nth-child(even) {
         </div>
 
     </div>
+
 </div>
 
 {% endblock %}

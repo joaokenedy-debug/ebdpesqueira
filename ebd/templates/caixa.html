@@ -12,14 +12,23 @@
 /* ===== GRID PRINCIPAL ===== */
 .dashboard {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.4fr;
-    grid-template-rows: auto auto 1fr;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-areas:
+        "cards cards cards"
+        "verba despesa despesa"
+        "mov pedidos pedidos";
     gap: 16px;
 }
 
+/* ===== ÁREAS ===== */
+.cards { grid-area: cards; }
+.verba { grid-area: verba; }
+.despesa { grid-area: despesa; }
+.movimentacao { grid-area: mov; }
+.pedidos { grid-area: pedidos; }
+
 /* ===== CARDS ===== */
 .cards {
-    grid-column: span 3;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
@@ -96,13 +105,12 @@ button {
 
 /* ===== PEDIDOS ===== */
 .pedidos {
-    grid-column: span 2;
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-    min-width: 780px;
+    min-width: 820px;
     border-collapse: collapse;
 }
 
@@ -142,7 +150,7 @@ tr:nth-child(even) {
 
     <div class="dashboard">
 
-        <!-- ===== TOPO ===== -->
+        <!-- ===== CARDS ===== -->
         <div class="cards">
             <div class="card">
                 <h3>Saldo no Caixa</h3>
@@ -155,7 +163,7 @@ tr:nth-child(even) {
         </div>
 
         <!-- ===== ADICIONAR VERBA ===== -->
-        <div class="box">
+        <div class="box verba">
             <h3>➕ Adicionar Verba</h3>
             <form method="POST" action="{{ url_for('adicionar_verba') }}" class="form-inline">
                 <input type="text" name="descricao" placeholder="Descrição" required>
@@ -165,7 +173,7 @@ tr:nth-child(even) {
         </div>
 
         <!-- ===== ADICIONAR DESPESA ===== -->
-        <div class="box">
+        <div class="box despesa">
             <h3>➖ Adicionar Despesa</h3>
             <form method="POST" action="{{ url_for('adicionar_despesa') }}" class="form-inline">
                 <input type="text" name="descricao" placeholder="Descrição" required>
@@ -187,7 +195,7 @@ tr:nth-child(even) {
             {% endfor %}
         </div>
 
-        <!-- ===== PAGAMENTOS DE PEDIDOS ===== -->
+        <!-- ===== PAGAMENTO DE PEDIDOS ===== -->
         <div class="box pedidos">
             <h3>💳 Pagamento de Pedidos</h3>
             <table>
@@ -220,7 +228,8 @@ tr:nth-child(even) {
                         <form method="POST"
                               action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}"
                               style="display:flex; gap:6px; justify-content:center;">
-                            <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required style="width:90px;">
+                            <input type="number" step="0.01" name="valor_pago"
+                                   placeholder="Valor" required style="width:90px;">
                             <button type="submit">Pagar</button>
                         </form>
                         {% else %}

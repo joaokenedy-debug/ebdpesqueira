@@ -81,13 +81,18 @@
         background: #b02a37;
     }
 
-    /* ===== Verbas horizontal ===== */
+    .btn-despesa {
+        background: #dc3545;
+    }
+
+    .btn-despesa:hover {
+        background: #b02a37;
+    }
+
+    /* ===== Verbas / Despesas ===== */
     .bloco-verbas,
     .bloco-pedidos {
-        width: 100%;
-        display: block;
         margin-bottom: 25px;
-        clear: both;
     }
 
     .verbas-horizontal {
@@ -107,6 +112,10 @@
         min-width: 240px;
     }
 
+    .card-despesa {
+        border-left: 4px solid #dc3545;
+    }
+
     .verba-card strong {
         font-size: 13px;
     }
@@ -120,7 +129,12 @@
         font-weight: bold;
         color: #198754;
         margin-left: auto;
-        white-space: nowrap;
+    }
+
+    .despesa-valor {
+        font-weight: bold;
+        color: #dc3545;
+        margin-left: auto;
     }
 
     /* ===== Tabela ===== */
@@ -131,7 +145,6 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
     }
 
     th, td {
@@ -156,7 +169,6 @@
         border-radius: 12px;
         font-size: 12px;
         font-weight: bold;
-        display: inline-block;
     }
 
     .quitado {
@@ -189,28 +201,41 @@
 
     <!-- ===== ADICIONAR VERBA ===== -->
     <h2>➕ Adicionar Verba</h2>
-
     <form method="POST" action="{{ url_for('adicionar_verba') }}">
         <input type="text" name="descricao" placeholder="Descrição" required>
         <input type="number" step="0.01" name="valor" placeholder="Valor" required>
         <button type="submit">Adicionar</button>
     </form>
 
-    <!-- ===== VERBAS ===== -->
+    <!-- ===== ADICIONAR DESPESA ===== -->
+    <h2>➖ Adicionar Despesa</h2>
+    <form method="POST" action="{{ url_for('adicionar_despesa') }}">
+        <input type="text" name="descricao" placeholder="Descrição da despesa" required>
+        <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+        <button type="submit" class="btn-despesa">Adicionar Despesa</button>
+    </form>
+
+    <!-- ===== VERBAS E DESPESAS ===== -->
     <div class="bloco-verbas">
-        <h2>📑 Verbas Adicionadas</h2>
+        <h2>📑 Movimentações do Caixa</h2>
 
         <div class="verbas-horizontal">
             {% for v in caixa %}
-            <div class="verba-card">
+            <div class="verba-card {% if v.valor < 0 %}card-despesa{% endif %}">
                 <div>
                     <strong>{{ v.descricao }}</strong><br>
                     <small>{{ v.data.strftime("%d/%m/%Y") }}</small>
                 </div>
 
-                <div class="verba-valor">
-                    R$ {{ "%.2f"|format(v.valor) }}
-                </div>
+                {% if v.valor >= 0 %}
+                    <div class="verba-valor">
+                        R$ {{ "%.2f"|format(v.valor) }}
+                    </div>
+                {% else %}
+                    <div class="despesa-valor">
+                        - R$ {{ "%.2f"|format(v.valor|abs) }}
+                    </div>
+                {% endif %}
 
                 <form method="POST" action="{{ url_for('excluir_verba', id_verba=v.id) }}">
                     <button class="btn-excluir" type="submit">✖</button>
@@ -242,7 +267,6 @@
                 <td>R$ {{ "%.2f"|format(p.total) }}</td>
                 <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
                 <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
-
                 <td>
                     {% if p.quitado %}
                         <span class="status quitado">✔ Quitado</span>
@@ -250,7 +274,6 @@
                         <span class="status pendente">⏳ Pendente</span>
                     {% endif %}
                 </td>
-
                 <td>
                     {% if not p.quitado %}
                     <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">

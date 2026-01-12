@@ -661,9 +661,31 @@ def registrar_pagamento(id_pedido):
 
 
 
+
+
+@app.route("/adicionar_despesa", methods=["POST"])
+@login_required
+def adicionar_despesa():
+    descricao = request.form["descricao"]
+    valor = float(request.form["valor"])
+
+    # garante que sempre seja negativo
+    valor = -abs(valor)
+
+    nova_despesa = Caixa(
+        descricao=descricao,
+        valor=valor,
+        data=datetime.now()
+    )
+
+    db.session.add(nova_despesa)
+    db.session.commit()
+
+    flash("Despesa adicionada com sucesso!", "success")
+    return redirect(url_for("caixa"))
+
 TOTAL_VISITAS = 0
 usuarios_online = {}
-
 @app.before_request
 def contar_visitas_e_online():
     global TOTAL_VISITAS
@@ -687,6 +709,7 @@ def injetar_stats():
         total_visitas=TOTAL_VISITAS,
         online=len(usuarios_online)
     )
+
 
 
 

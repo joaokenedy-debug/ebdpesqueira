@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # Garante que o .env é carregado
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ebd_pesqueira_bd_user:M6vFf4JYPw3Ff8W2owevjTVWGdC64TbG@dpg-d5c012e3jp1c73dj6t20-a/ebd_pesqueira_bd"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://neondb_owner:npg_iIqe6UEpMDh9@ep-blue-smoke-adpbjyki-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SECRET_KEY"] = "193c5a16"
 app.config["UPLOAD_FOLDER"] = "static/pedidos"
@@ -27,6 +27,7 @@ with app.app_context():
 
 # Importa as rotas após inicializar o banco
 from ebd import routes
+
 
 
 

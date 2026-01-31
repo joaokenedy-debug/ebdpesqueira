@@ -1,8 +1,12 @@
-from ebd import database, login_manager
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy import Identity
+from ebd import database, login_manager
 
 
+# =========================
+# LOGIN
+# =========================
 @login_manager.user_loader
 def load_usuario(id_usuario):
     return Usuario.query.get(int(id_usuario))
@@ -16,8 +20,8 @@ class Usuario(database.Model, UserMixin):
 
     id = database.Column(
         database.Integer,
-        primary_key=True,
-        autoincrement=True
+        Identity(),
+        primary_key=True
     )
 
     usarname = database.Column(database.String, nullable=False)
@@ -25,6 +29,8 @@ class Usuario(database.Model, UserMixin):
     congregacao = database.Column(database.String, nullable=False)
     senha = database.Column(database.String, nullable=False)
     is_admin = database.Column(database.Boolean, default=False)
+
+    pedidos = database.relationship("Pedido", back_populates="usuario")
 
 
 # =========================
@@ -35,8 +41,8 @@ class Pedido(database.Model):
 
     id = database.Column(
         database.Integer,
-        primary_key=True,
-        autoincrement=True
+        Identity(),
+        primary_key=True
     )
 
     id_usuario = database.Column(
@@ -49,14 +55,19 @@ class Pedido(database.Model):
     data = database.Column(database.DateTime, default=datetime.utcnow)
     total = database.Column(database.Float, nullable=False)
 
+    usuario = database.relationship("Usuario", back_populates="pedidos")
+
     itens = database.relationship(
         "ItemPedido",
-        backref="pedido",
-        cascade="all, delete-orphan",
-        lazy=True
+        back_populates="pedido",
+        cascade="all, delete-orphan"
     )
 
-    usuario = database.relationship("Usuario", backref="pedidos")
+    pagamentos = database.relationship(
+        "Pagamento",
+        back_populates="pedido",
+        cascade="all, delete-orphan"
+    )
 
     @property
     def total_pago(self):
@@ -79,8 +90,8 @@ class ItemPedido(database.Model):
 
     id = database.Column(
         database.Integer,
-        primary_key=True,
-        autoincrement=True
+        Identity(),
+        primary_key=True
     )
 
     id_pedido = database.Column(
@@ -95,6 +106,8 @@ class ItemPedido(database.Model):
     preco_unitario = database.Column(database.Float, nullable=False)
     subtotal = database.Column(database.Float, nullable=False)
 
+    pedido = database.relationship("Pedido", back_populates="itens")
+
 
 # =========================
 # CAIXA
@@ -104,8 +117,8 @@ class Caixa(database.Model):
 
     id = database.Column(
         database.Integer,
-        primary_key=True,
-        autoincrement=True
+        Identity(),
+        primary_key=True
     )
 
     descricao = database.Column(database.String(200), nullable=False)
@@ -121,8 +134,8 @@ class Pagamento(database.Model):
 
     id = database.Column(
         database.Integer,
-        primary_key=True,
-        autoincrement=True
+        Identity(),
+        primary_key=True
     )
 
     id_pedido = database.Column(
@@ -134,4 +147,4 @@ class Pagamento(database.Model):
     valor_pago = database.Column(database.Float, nullable=False)
     data = database.Column(database.DateTime, default=datetime.utcnow)
 
-    pedido = database.relationship("Pedido", backref="pagamentos")
+    pedido = database.relationship("Pedido", back_populates="pagamentos")

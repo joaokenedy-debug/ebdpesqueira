@@ -76,6 +76,7 @@ def finalizar():
 
     itens_excel = []
     total = 0
+
     for produto in produtos:
         pid = str(produto["id"])
         if pid in carrinho:
@@ -90,27 +91,30 @@ def finalizar():
                 "Subtotal": subtotal
             })
 
-    # --- SALVAR NO BANCO ---
+    # --- SALVAR PEDIDO ---
     novo_pedido = Pedido(
-        id_usuario=current_user.id,
+        usuario=current_user,   # 👈 RELACIONAMENTO
         congregacao=current_user.congregacao,
         total=total
     )
-    database.session.add(novo_pedido)
-    database.session.flush()  # garante o id_pedido disponível
 
+    # --- ITENS ---
     for item in itens_excel:
-        item_db = ItemPedido(
-            id_pedido=novo_pedido.id,
-            produto=item["Produto"],
-            codigo=item["ID"],
-            quantidade=item["Quantidade"],
-            preco_unitario=item["Preço Unitário"],
-            subtotal=item["Subtotal"]
+        novo_pedido.itens.append(
+            ItemPedido(
+                produto=item["Produto"],
+                codigo=item["ID"],
+                quantidade=item["Quantidade"],
+                preco_unitario=item["Preço Unitário"],
+                subtotal=item["Subtotal"]
+            )
         )
-        database.session.add(item_db)
 
-    database.session.commit()
+    database.session.add(novo_pedido)
+    database.session.commit()   # 👈 AQUI o ID É GERADO
+
+    # AGORA SIM o ID EXISTE
+    pedido_id = novo_pedido.id
 
     # --- GERA PDF ---
     pdf_output = BytesIO()
@@ -139,31 +143,25 @@ def finalizar():
     ]))
 
     elements.append(t)
-    elements.append(Spacer(1, 24))
 
-    # Ajuste de horário para Brasília (-3h UTC)
     agora_brasilia = datetime.now() - timedelta(hours=3)
-
     elements.append(Paragraph(
         f"Pedido da EBD - {current_user.congregacao.upper()} - {agora_brasilia.strftime('%d/%m/%Y %H:%M:%S')}",
         style["Title"]
     ))
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph(f"Usuário: {current_user.usarname.upper()}", style["Title"]))
 
     doc.build(elements)
     pdf_output.seek(0)
 
-    # Limpa carrinho
     session["carrinho"] = {}
 
-    # Envia PDF para download
     return send_file(
         pdf_output,
-        download_name=f"pedido_{novo_pedido.id}.pdf",
+        download_name=f"pedido_{pedido_id}.pdf",
         as_attachment=True,
         mimetype="application/pdf"
     )
+
 
     
 @app.route("/cadastro", methods = ["GET", "POST"])
@@ -712,6 +710,7 @@ def injetar_stats():
         total_visitas=TOTAL_VISITAS,
         online=len(usuarios_online)
     )
+
 
 
 

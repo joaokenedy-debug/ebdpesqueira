@@ -251,6 +251,18 @@ tr:hover td {
     background: #cbd5e1;
     border-radius: 10px;
 }
+.sidebar {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.sidebar h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+} 
+
 
 /* =========================
    DESKTOP
@@ -276,6 +288,26 @@ tr:hover td {
 </style>
 
 <div class="container">
+   <!-- 🔹 SIDEBAR TRIMESTRES -->
+   <aside class="sidebar">
+       {% if current_user.is_authenticated and current_user.is_admin %}
+        <a href="{{ url_for('caixa') }}">💰 Caixa</a>
+        
+        
+        {% endif %}
+    <h3>📅 Trimestres</h3>
+
+    {% for t in trimestres %}
+        {% set partes = t.split("-") %}
+        {% set ano_t = partes[0]|int %}
+        {% set tri_t = partes[1]|int %}
+
+        <a class="trimestre-link {% if ano_t == ano and tri_t == trimestre %}trimestre-ativo{% endif %}"
+           href="{{ url_for('caixa_trimestre', tri=t) }}">
+            {{ ano_t }} · T{{ tri_t }}
+        </a>
+    {% endfor %}
+</aside>
 
     <!-- ===== RESUMO ===== -->
     <div class="resumo">
@@ -369,3 +401,4 @@ tr:hover td {
 </div>
 
 {% endblock %}
+

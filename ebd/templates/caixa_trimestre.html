@@ -2,12 +2,9 @@
 {% block body %}
 
 <style>
-/* =========================
-   LAYOUT
-========================= */
-.layout {
+.dashboard {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 260px 1fr;
     gap: 16px;
 }
 
@@ -16,57 +13,43 @@
     border-radius: 16px;
     padding: 16px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    height: fit-content;
 }
 
-.sidebar h4 {
+.sidebar h3 {
     font-size: 14px;
     margin-bottom: 12px;
-    color: #111827;
 }
 
-.sidebar a {
+.trimestre-link {
     display: block;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: 10px;
     text-decoration: none;
-    color: #374151;
-    font-size: 14px;
+    color: #1f2937;
     margin-bottom: 6px;
-    transition: all 0.2s ease;
+    font-size: 14px;
 }
 
-.sidebar a:hover {
+.trimestre-link:hover {
     background: #f1f5f9;
 }
 
-.sidebar a.ativo {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
+.trimestre-ativo {
+    background: #2563eb;
+    color: white;
     font-weight: bold;
 }
 
-/* =========================
-   CONTEÚDO PRINCIPAL
-========================= */
-.container {
-    width: 100%;
-    max-width: 1400px;
-    margin: auto;
-}
-
-/* ===== RESUMO ===== */
 .resumo {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
-    margin-bottom: 16px;
 }
 
 .resumo-card {
-    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    background: #ffffff;
     border-radius: 16px;
-    padding: 22px;
+    padding: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     border-left: 6px solid transparent;
 }
@@ -77,62 +60,21 @@
 .resumo-card h4 {
     font-size: 13px;
     color: #6b7280;
-    margin-bottom: 6px;
 }
 
 .resumo-card p {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 800;
 }
 
-.saldo { color: #16a34a; }
-.receber { color: #2563eb; }
-
-/* ===== BOX ===== */
 .box {
     background: #ffffff;
     border-radius: 16px;
     padding: 20px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-    margin-bottom: 16px;
+    margin-top: 16px;
 }
 
-.box h3 {
-    font-size: 15px;
-    margin-bottom: 14px;
-}
-
-/* ===== FORM ===== */
-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-input, button {
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-}
-
-input {
-    flex: 1;
-    min-width: 140px;
-}
-
-button {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
-    color: #ffffff;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-despesa {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-}
-
-/* ===== MOVIMENTAÇÃO ===== */
 .movimentacao {
     max-height: 280px;
     overflow-y: auto;
@@ -141,36 +83,22 @@ button {
 .mov-item {
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
     border-bottom: 1px dashed #e5e7eb;
-    font-size: 14px;
+    padding: 10px 0;
 }
 
-.valor-positivo {
-    color: #16a34a;
-    font-weight: bold;
-}
+.valor-positivo { color: #16a34a; font-weight: bold; }
+.valor-negativo { color: #dc2626; font-weight: bold; }
 
-.valor-negativo {
-    color: #dc2626;
-    font-weight: bold;
-}
-
-/* ===== TABELA ===== */
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
-}
-
-thead {
-    background: #f1f5f9;
 }
 
 th, td {
     padding: 10px;
-    font-size: 14px;
     border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
 }
 
 .status {
@@ -180,106 +108,140 @@ th, td {
     font-weight: bold;
 }
 
-.quitado {
-    background: #dcfce7;
-    color: #166534;
+.quitado { background: #dcfce7; color: #166534; }
+.pendente { background: #fee2e2; color: #991b1b; }
+
+form {
+    display: flex;
+    gap: 6px;
 }
 
-.pendente {
-    background: #fee2e2;
-    color: #991b1b;
+input, button {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 900px) {
-    .layout {
-        grid-template-columns: 1fr;
-    }
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-despesa {
+    background: #dc2626;
 }
 </style>
 
-<div class="layout">
+<div class="dashboard">
 
-    <!-- ===== SIDEBAR ===== -->
+    <!-- 🔹 SIDEBAR TRIMESTRES -->
     <aside class="sidebar">
-        <h4>📅 Trimestres</h4>
-        {% for tri in trimestres_disponiveis %}
-            <a href="{{ url_for('caixa_trimestre', tri=tri) }}"
-               class="{% if tri == trimestre_ativo %}ativo{% endif %}">
-               {{ tri.split('-')[1] }}º Trimestre / {{ tri.split('-')[0] }}
+        <h3>📅 Trimestres</h3>
+        {% for t in trimestres %}
+            <a class="trimestre-link {% if t.ano == ano and t.trimestre == trimestre %}trimestre-ativo{% endif %}"
+               href="{{ url_for('caixa_trimestre', ano=t.ano, trimestre=t.trimestre) }}">
+                {{ t.ano }} · T{{ t.trimestre }}
             </a>
         {% endfor %}
     </aside>
 
-    <!-- ===== CONTEÚDO ===== -->
-    <div class="container">
+    <!-- 🔹 CONTEÚDO -->
+    <main>
 
         <!-- RESUMO -->
         <div class="resumo">
             <div class="resumo-card">
                 <h4>Saldo em Caixa</h4>
-                <p class="saldo">R$ {{ "%.2f"|format(saldo_caixa) }}</p>
+                <p>R$ {{ "%.2f"|format(saldo_caixa) }}</p>
             </div>
             <div class="resumo-card">
                 <h4>Total a Receber</h4>
-                <p class="receber">R$ {{ "%.2f"|format(total_receber) }}</p>
+                <p>R$ {{ "%.2f"|format(total_receber) }}</p>
             </div>
         </div>
 
         <!-- LANÇAMENTOS -->
         <div class="box">
+            <h3>➕ Adicionar Verba</h3>
+            <form method="POST" action="{{ url_for('adicionar_verba') }}">
+                <input type="hidden" name="ano" value="{{ ano }}">
+                <input type="hidden" name="trimestre" value="{{ trimestre }}">
+                <input name="descricao" placeholder="Descrição" required>
+                <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+                <button>Adicionar</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <h3>➖ Adicionar Despesa</h3>
+            <form method="POST" action="{{ url_for('adicionar_despesa') }}">
+                <input type="hidden" name="ano" value="{{ ano }}">
+                <input type="hidden" name="trimestre" value="{{ trimestre }}">
+                <input name="descricao" placeholder="Descrição" required>
+                <input type="number" step="0.01" name="valor" placeholder="Valor" required>
+                <button class="btn-despesa">Lançar</button>
+            </form>
+        </div>
+
+        <!-- MOVIMENTAÇÃO -->
+        <div class="box movimentacao">
             <h3>📊 Movimentação do Caixa</h3>
-            <div class="movimentacao">
-                {% for c in caixa %}
-                <div class="mov-item">
-                    <div>
-                        <strong>{{ c.descricao }}</strong><br>
-                        <small>{{ c.data.strftime("%d/%m/%Y") }}</small>
-                    </div>
-                    <div class="{{ 'valor-positivo' if c.valor >= 0 else 'valor-negativo' }}">
-                        R$ {{ "%.2f"|format(c.valor) }}
-                    </div>
+            {% for c in caixa %}
+            <div class="mov-item">
+                <div>
+                    <strong>{{ c.descricao }}</strong><br>
+                    <small>{{ c.data.strftime("%d/%m/%Y") }}</small>
                 </div>
-                {% endfor %}
+                <div class="{{ 'valor-positivo' if c.valor >= 0 else 'valor-negativo' }}">
+                    R$ {{ "%.2f"|format(c.valor) }}
+                </div>
             </div>
+            {% endfor %}
         </div>
 
         <!-- PEDIDOS -->
         <div class="box">
-            <h3>💳 Pedidos do Trimestre</h3>
+            <h3>💳 Pagamentos de Pedidos</h3>
             <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Congregação</th>
-                        <th>Total</th>
-                        <th>Pago</th>
-                        <th>Restante</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <tr>
+                    <th>ID</th>
+                    <th>Congregação</th>
+                    <th>Total</th>
+                    <th>Pago</th>
+                    <th>Restante</th>
+                    <th>Status</th>
+                    <th>Pagar</th>
+                </tr>
                 {% for p in pedidos %}
-                    <tr>
-                        <td>{{ p.id }}</td>
-                        <td>{{ p.congregacao }}</td>
-                        <td>R$ {{ "%.2f"|format(p.total) }}</td>
-                        <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
-                        <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
-                        <td>
-                            {% if p.quitado %}
-                                <span class="status quitado">Quitado</span>
-                            {% else %}
-                                <span class="status pendente">Pendente</span>
-                            {% endif %}
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ p.id }}</td>
+                    <td>{{ p.congregacao }}</td>
+                    <td>R$ {{ "%.2f"|format(p.total) }}</td>
+                    <td>R$ {{ "%.2f"|format(p.total_pago) }}</td>
+                    <td>R$ {{ "%.2f"|format(p.saldo_restante) }}</td>
+                    <td>
+                        {% if p.quitado %}
+                            <span class="status quitado">Quitado</span>
+                        {% else %}
+                            <span class="status pendente">Pendente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not p.quitado %}
+                        <form method="POST" action="{{ url_for('registrar_pagamento', id_pedido=p.id) }}">
+                            <input type="number" step="0.01" name="valor_pago" placeholder="Valor" required>
+                            <button>OK</button>
+                        </form>
+                        {% else %} — {% endif %}
+                    </td>
+                </tr>
                 {% endfor %}
-                </tbody>
             </table>
         </div>
 
-    </div>
+    </main>
 </div>
 
 {% endblock %}

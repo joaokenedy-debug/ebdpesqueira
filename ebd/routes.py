@@ -632,25 +632,24 @@ def caixa_trimestre():
 
     # 🔹 Caixa (AJUSTE AQUI)
     caixa = (
-        database.session.query(Caixa)
-        .outerjoin(Pedido, Caixa.id_pedido == Pedido.id)
-        .filter(
-            or_(
-                # Caixa ligado a pedido → data do pedido
-                and_(
-                    Caixa.id_pedido.isnot(None),
-                    Pedido.data.between(inicio, fim)
-                ),
-                # Verbas e despesas → data do lançamento
-                and_(
-                    Caixa.id_pedido.is_(None),
-                    Caixa.data.between(inicio, fim)
-                )
+    database.session.query(Caixa)
+    .outerjoin(Pedido, Caixa.pedido_id == Pedido.id)
+    .filter(
+        or_(
+            and_(
+                Caixa.pedido_id.isnot(None),
+                Pedido.data.between(inicio, fim)
+            ),
+            and_(
+                Caixa.pedido_id.is_(None),
+                Caixa.data.between(inicio, fim)
             )
         )
-        .order_by(Caixa.data.desc())
-        .all()
     )
+    .order_by(Caixa.data.desc())
+    .all()
+)
+
 
     # 🔹 Saldo do caixa do trimestre
     saldo_caixa = sum(c.valor for c in caixa)
@@ -847,6 +846,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

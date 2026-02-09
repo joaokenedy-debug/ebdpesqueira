@@ -634,10 +634,11 @@ def caixa_trimestre():
     ).order_by(Pedido.data.desc()).all()
 
     caixa = Caixa.query.filter(
-        Caixa.data.between(inicio, fim)
-    ).order_by(Caixa.data.desc()).all()
-
+    Caixa.data.between(inicio, fim)
+        ).order_by(Caixa.data.desc()).all()
+        
     saldo_caixa = sum(c.valor for c in caixa)
+
     total_receber = sum(p.saldo_restante for p in pedidos if not p.quitado)
 
     return render_template(
@@ -653,6 +654,7 @@ def caixa_trimestre():
     )
 
     
+
 @app.route("/adicionar_verba", methods=["POST"])
 @login_required
 def adicionar_verba():
@@ -662,12 +664,33 @@ def adicionar_verba():
     valor = float(request.form["valor"])
     descricao = request.form["descricao"]
 
-    novo = Caixa(descricao=descricao, valor=valor)
+    # 🔹 dados do trimestre vindo do form
+    ano = int(request.form.get("ano"))
+    trimestre = int(request.form.get("trimestre"))
+
+    if trimestre == 1:
+        data_caixa = date(ano, 1, 1)
+    elif trimestre == 2:
+        data_caixa = date(ano, 4, 1)
+    elif trimestre == 3:
+        data_caixa = date(ano, 7, 1)
+    elif trimestre == 4:
+        data_caixa = date(ano, 10, 1)
+    else:
+        return "Trimestre inválido", 400
+
+    novo = Caixa(
+        descricao=descricao,
+        valor=valor,
+        data=data_caixa
+    )
+
     database.session.add(novo)
     database.session.commit()
 
     flash("Verba adicionada com sucesso!", "success")
-    return redirect(url_for("caixa"))
+
+    return redirect(request.referrer or url_for("caixa"))
 
 @app.route("/excluir_verba/<int:id_verba>", methods=["POST"])
 @login_required
@@ -722,28 +745,59 @@ def registrar_pagamento(id_pedido):
 
 
 
+
 @app.route("/adicionar_despesa", methods=["POST"])
 @login_required
 def adicionar_despesa():
     if not current_user.is_admin:
         return "Acesso negado", 403
 
-    valor = float(request.form["valor"])
-    descricao = request.form["descricao"]
+    try:
+        valor = float(request.form["valor"])
+        descricao = request.form["descricao"].strip()
 
-    # garante que a despesa seja sempre negativa
-    valor = -abs(valor)
+        # 🔴 despesa sempre negativa
+        valor = -abs(valor)
 
-    nova_despesa = Caixa(
-        descricao=descricao,
-        valor=valor
-    )
+        # 🔹 dados do trimestre (se existirem)
+        ano = request.form.get("ano")
+        trimestre = request.form.get("trimestre")
 
-    database.session.add(nova_despesa)
-    database.session.commit()
+        if ano and trimestre:
+            ano = int(ano)
+            trimestre = int(trimestre)
 
-    flash("Despesa adicionada com sucesso!", "danger")
-    return redirect(url_for("caixa"))
+            if trimestre == 1:
+                data_caixa = date(ano, 1, 1)
+            elif trimestre == 2:
+                data_caixa = date(ano, 4, 1)
+            elif trimestre == 3:
+                data_caixa = date(ano, 7, 1)
+            elif trimestre == 4:
+                data_caixa = date(ano, 10, 1)
+            else:
+                return "Trimestre inválido", 400
+        else:
+            # fallback: data atual
+            data_caixa = date.today()
+
+        nova_despesa = Caixa(
+            descricao=descricao,
+            valor=valor,
+            data=data_caixa
+        )
+
+        database.session.add(nova_despesa)
+        database.session.commit()
+
+        flash("Despesa adicionada com sucesso!", "danger")
+
+    except Exception as e:
+        database.session.rollback()
+        flash(f"Erro ao adicionar despesa: {e}", "danger")
+
+    # 🔁 volta para caixa OU caixa_trimestre
+    return redirect(request.referrer or url_for("caixa"))
 
 
 TOTAL_VISITAS = 0
@@ -774,6 +828,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

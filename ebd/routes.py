@@ -642,16 +642,18 @@ def caixa_trimestre():
     total_receber = sum(p.saldo_restante for p in pedidos if not p.quitado)
 
     return render_template(
-        "caixa_trimestre.html",
-        pedidos=pedidos,
-        caixa=caixa,
-        saldo_caixa=saldo_caixa,
-        total_receber=total_receber,
-        trimestres_disponiveis=trimestres_disponiveis,
-        trimestre_ativo=f"{ano}-{trimestre}",
-        ano=ano,
-        trimestre=trimestre
-    )
+    "caixa_trimestre.html",
+    pedidos=pedidos,
+    caixa=caixa,
+    saldo_caixa=saldo_caixa,
+    total_receber=total_receber,
+    trimestres=trimestres_disponiveis, 
+    ano=ano,
+    trimestre=trimestre
+)
+
+
+    
 
     
 
@@ -828,6 +830,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

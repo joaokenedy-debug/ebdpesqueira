@@ -138,6 +138,11 @@ button {
 
     <!-- 🔹 SIDEBAR TRIMESTRES -->
    <aside class="sidebar">
+       {% if current_user.is_authenticated and current_user.is_admin %}
+        <a href="{{ url_for('caixa') }}">💰 Caixa</a>
+        
+        
+        {% endif %}
     <h3>📅 Trimestres</h3>
 
     {% for t in trimestres %}
@@ -251,5 +256,6 @@ button {
 </div>
 
 {% endblock %}
+
 
 

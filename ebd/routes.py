@@ -593,42 +593,68 @@ def caixa():
     )
 @app.route("/caixa/trimestre/<int:ano>/<int:trimestre>")
 @login_required
-def caixa_trimestre(ano, trimestre):
-    # Define intervalo do trimestre
-    if trimestre == 1:
-        inicio = date(ano, 1, 1)
-        fim = date(ano, 3, 31)
-    elif trimestre == 2:
-        inicio = date(ano, 4, 1)
-        fim = date(ano, 6, 30)
-    elif trimestre == 3:
-        inicio = date(ano, 7, 1)
-        fim = date(ano, 9, 30)
-    elif trimestre == 4:
-        inicio = date(ano, 10, 1)
-        fim = date(ano, 12, 31)
 
-    # Pedidos do trimestre
-    pedidos = Pedido.query.filter(
-        Pedido.data.between(inicio, fim)
+
+@app.route("/caixa/trimestre")
+@login_required
+def caixa_trimestre():
+    if not current_user.is_admin:
+        return "Acesso negado", 403
+
+    # 🔹 Buscar trimestres existentes a partir dos pedidos
+    resultados = database.session.query(
+        func.extract('year', Pedido.data).label('ano'),
+        func.ceil(func.extract('month', Pedido.data) / 3).label('trimestre')
+    ).distinct().order_by(
+        func.extract('year', Pedido.data).desc(),
+        func.ceil(func.extract('month', Pedido.data) / 3).desc()
     ).all()
 
-    saldo_caixa = sum(c.valor for c in Caixa.query.filter(
-        Caixa.data.between(inicio, fim)
-    ))
+    # Lista tipo: ['2026-1', '2026-2', '2025-4']
+    trimestres_disponiveis = [
+        f"{int(r.ano)}-{int(r.trimestre)}" for r in resultados
+    ]
 
-    total_receber = sum(
-        p.saldo_restante for p in pedidos if not p.quitado
-    )
+    # 🔹 Trimestre selecionado (query string)
+    tri_param = request.args.get("tri")
+
+    if tri_param and tri_param in trimestres_disponiveis:
+        ano, trimestre = map(int, tri_param.split("-"))
+    else:
+        # padrão → trimestre mais recente
+        ano, trimestre = map(int, trimestres_disponiveis[0].split("-"))
+
+    # 🔹 Intervalo do trimestre
+    inicio = date(ano, (trimestre - 1) * 3 + 1, 1)
+    if trimestre == 4:
+        fim = date(ano, 12, 31)
+    else:
+        fim = date(ano, trimestre * 3 + 1, 1) - timedelta(days=1)
+
+    # 🔹 Dados filtrados
+    pedidos = Pedido.query.filter(
+        Pedido.data.between(inicio, fim)
+    ).order_by(Pedido.data.desc()).all()
+
+    caixa = Caixa.query.filter(
+        Caixa.data.between(inicio, fim)
+    ).order_by(Caixa.data.desc()).all()
+
+    saldo_caixa = sum(c.valor for c in caixa)
+    total_receber = sum(p.saldo_restante for p in pedidos if not p.quitado)
 
     return render_template(
         "caixa_trimestre.html",
         pedidos=pedidos,
+        caixa=caixa,
         saldo_caixa=saldo_caixa,
         total_receber=total_receber,
-        trimestre=trimestre,
-        ano=ano
+        trimestres_disponiveis=trimestres_disponiveis,
+        trimestre_ativo=f"{ano}-{trimestre}",
+        ano=ano,
+        trimestre=trimestre
     )
+
     
 @app.route("/adicionar_verba", methods=["POST"])
 @login_required
@@ -751,6 +777,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

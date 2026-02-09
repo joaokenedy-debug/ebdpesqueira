@@ -13,7 +13,8 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from sqlalchemy import func
+from sqlalchemy import func, or_
+
 
 
 
@@ -847,6 +848,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

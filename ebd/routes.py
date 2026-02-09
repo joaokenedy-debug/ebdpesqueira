@@ -607,18 +607,15 @@ def caixa_trimestre():
         func.ceil(func.extract('month', Pedido.data) / 3).desc()
     ).all()
 
-    # Lista tipo: ['2026-1', '2026-2', '2025-4']
     trimestres_disponiveis = [
         f"{int(r.ano)}-{int(r.trimestre)}" for r in resultados
     ]
 
-    # 🔹 Trimestre selecionado (query string)
     tri_param = request.args.get("tri")
 
     if tri_param and tri_param in trimestres_disponiveis:
         ano, trimestre = map(int, tri_param.split("-"))
     else:
-        # padrão → trimestre mais recente
         ano, trimestre = map(int, trimestres_disponiveis[0].split("-"))
 
     # 🔹 Intervalo do trimestre
@@ -628,29 +625,49 @@ def caixa_trimestre():
     else:
         fim = date(ano, trimestre * 3 + 1, 1) - timedelta(days=1)
 
-    # 🔹 Dados filtrados
+    # 🔹 Pedidos (SEM ALTERAÇÃO)
     pedidos = Pedido.query.filter(
         Pedido.data.between(inicio, fim)
     ).order_by(Pedido.data.desc()).all()
 
-    caixa = Caixa.query.filter(
-    Caixa.data.between(inicio, fim)
-        ).order_by(Caixa.data.desc()).all()
-        
+    # 🔹 Caixa (AJUSTE AQUI)
+    caixa = (
+        database.session.query(Caixa)
+        .outerjoin(Pedido, Caixa.id_pedido == Pedido.id)
+        .filter(
+            or_(
+                # Caixa ligado a pedido → data do pedido
+                and_(
+                    Caixa.id_pedido.isnot(None),
+                    Pedido.data.between(inicio, fim)
+                ),
+                # Verbas e despesas → data do lançamento
+                and_(
+                    Caixa.id_pedido.is_(None),
+                    Caixa.data.between(inicio, fim)
+                )
+            )
+        )
+        .order_by(Caixa.data.desc())
+        .all()
+    )
+
+    # 🔹 Saldo do caixa do trimestre
     saldo_caixa = sum(c.valor for c in caixa)
 
+    # 🔹 Total a receber (já correto)
     total_receber = sum(p.saldo_restante for p in pedidos if not p.quitado)
 
     return render_template(
-    "caixa_trimestre.html",
-    pedidos=pedidos,
-    caixa=caixa,
-    saldo_caixa=saldo_caixa,
-    total_receber=total_receber,
-    trimestres=trimestres_disponiveis, 
-    ano=ano,
-    trimestre=trimestre
-)
+        "caixa_trimestre.html",
+        pedidos=pedidos,
+        caixa=caixa,
+        saldo_caixa=saldo_caixa,
+        total_receber=total_receber,
+        trimestres=trimestres_disponiveis,
+        ano=ano,
+        trimestre=trimestre
+    )
 
 
     
@@ -830,6 +847,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

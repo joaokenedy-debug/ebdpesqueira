@@ -139,6 +139,8 @@ button {
     <!-- 🔹 SIDEBAR TRIMESTRES -->
     <aside class="sidebar">
         <h3>📅 Trimestres</h3>
+        {{ trimestres }}
+
         {% for t in trimestres %}
             <a class="trimestre-link {% if t.ano == ano and t.trimestre == trimestre %}trimestre-ativo{% endif %}"
                href="{{ url_for('caixa_trimestre', ano=t.ano, trimestre=t.trimestre) }}">
@@ -245,3 +247,4 @@ button {
 </div>
 
 {% endblock %}
+

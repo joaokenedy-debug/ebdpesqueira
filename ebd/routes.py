@@ -591,6 +591,44 @@ def caixa():
         saldo_caixa=saldo_caixa,
         total_receber=total_receber
     )
+@app.route("/caixa/trimestre/<int:ano>/<int:trimestre>")
+@login_required
+def caixa_trimestre(ano, trimestre):
+    # Define intervalo do trimestre
+    if trimestre == 1:
+        inicio = date(ano, 1, 1)
+        fim = date(ano, 3, 31)
+    elif trimestre == 2:
+        inicio = date(ano, 4, 1)
+        fim = date(ano, 6, 30)
+    elif trimestre == 3:
+        inicio = date(ano, 7, 1)
+        fim = date(ano, 9, 30)
+    elif trimestre == 4:
+        inicio = date(ano, 10, 1)
+        fim = date(ano, 12, 31)
+
+    # Pedidos do trimestre
+    pedidos = Pedido.query.filter(
+        Pedido.data.between(inicio, fim)
+    ).all()
+
+    saldo_caixa = sum(c.valor for c in Caixa.query.filter(
+        Caixa.data.between(inicio, fim)
+    ))
+
+    total_receber = sum(
+        p.saldo_restante for p in pedidos if not p.quitado
+    )
+
+    return render_template(
+        "caixa_trimestre.html",
+        pedidos=pedidos,
+        saldo_caixa=saldo_caixa,
+        total_receber=total_receber,
+        trimestre=trimestre,
+        ano=ano
+    )
     
 @app.route("/adicionar_verba", methods=["POST"])
 @login_required
@@ -714,43 +752,7 @@ def injetar_stats():
 
 from datetime import date
 
-@app.route("/caixa/trimestre/<int:ano>/<int:trimestre>")
-def caixa_trimestre(ano, trimestre):
-    # Define intervalo do trimestre
-    if trimestre == 1:
-        inicio = date(ano, 1, 1)
-        fim = date(ano, 3, 31)
-    elif trimestre == 2:
-        inicio = date(ano, 4, 1)
-        fim = date(ano, 6, 30)
-    elif trimestre == 3:
-        inicio = date(ano, 7, 1)
-        fim = date(ano, 9, 30)
-    elif trimestre == 4:
-        inicio = date(ano, 10, 1)
-        fim = date(ano, 12, 31)
 
-    # Pedidos do trimestre
-    pedidos = Pedido.query.filter(
-        Pedido.data.between(inicio, fim)
-    ).all()
-
-    saldo_caixa = sum(c.valor for c in Caixa.query.filter(
-        Caixa.data.between(inicio, fim)
-    ))
-
-    total_receber = sum(
-        p.saldo_restante for p in pedidos if not p.quitado
-    )
-
-    return render_template(
-        "caixa_trimestre.html",
-        pedidos=pedidos,
-        saldo_caixa=saldo_caixa,
-        total_receber=total_receber,
-        trimestre=trimestre,
-        ano=ano
-    )
 
 
 

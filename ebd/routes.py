@@ -740,17 +740,18 @@ def registrar_pagamento(id_pedido):
         flash("Valor maior que o saldo restante!", "danger")
         return redirect(url_for("caixa"))
 
-    # 1️⃣ registra o pagamento
+    # 1️⃣ pagamento
     pagamento = Pagamento(
         id_pedido=pedido.id,
         valor_pago=valor
     )
     database.session.add(pagamento)
 
-    # 2️⃣ registra entrada no caixa
+    # 2️⃣ caixa (🔥 VINCULADO AO PEDIDO 🔥)
     caixa = Caixa(
         descricao=f"Pagamento pedido #{pedido.id}",
-        valor=valor
+        valor=valor,
+        id_pedido=pedido.id   # ✅ LINHA QUE FALTAVA
     )
     database.session.add(caixa)
 
@@ -846,6 +847,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

@@ -193,7 +193,9 @@
             {% if current_user.is_authenticated %}
                 {% if current_user.is_admin %}
                     <a href="{{ url_for('adm', id_usuario=current_user.id) }}">PAINEL ADM</a>
-                {% else %}
+                    
+                    <a href="{{ url_for('caixa_trimestre') }}">💰 Caixa_trimestre</a>
+                        {% else %}
                     <a href="{{ url_for('perfil', id_usuario=current_user.id) }}">FAZER PEDIDO</a>
                 {% endif %}
             {% else %}
@@ -319,6 +321,7 @@
 {% endblock %}
 </body>
 </html>
+
 
 
 

@@ -639,11 +639,11 @@ def caixa_trimestre():
     .filter(
         or_(
             and_(
-                Caixa.pedido_id.isnot(None),
+                Caixa.id_pedido.isnot(None),
                 Pedido.data.between(inicio, fim)
             ),
             and_(
-                Caixa.pedido_id.is_(None),
+                Caixa.id_pedido.is_(None),
                 Caixa.data.between(inicio, fim)
             )
         )
@@ -849,6 +849,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

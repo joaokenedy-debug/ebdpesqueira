@@ -633,7 +633,7 @@ def caixa_trimestre():
     # 🔹 Caixa (AJUSTE AQUI)
     caixa = (
     database.session.query(Caixa)
-    .outerjoin(Pedido, Caixa.pedido_id == Pedido.id)
+    .outerjoin(Pedido, Caixa.id_pedido == Pedido.id)
     .filter(
         or_(
             and_(
@@ -847,6 +847,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

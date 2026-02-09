@@ -137,17 +137,21 @@ button {
 <div class="dashboard">
 
     <!-- 🔹 SIDEBAR TRIMESTRES -->
-    <aside class="sidebar">
-        <h3>📅 Trimestres</h3>
-        {{ trimestres }}
+   <aside class="sidebar">
+    <h3>📅 Trimestres</h3>
 
-        {% for t in trimestres %}
-            <a class="trimestre-link {% if t.ano == ano and t.trimestre == trimestre %}trimestre-ativo{% endif %}"
-               href="{{ url_for('caixa_trimestre', ano=t.ano, trimestre=t.trimestre) }}">
-                {{ t.ano }} · T{{ t.trimestre }}
-            </a>
-        {% endfor %}
-    </aside>
+    {% for t in trimestres %}
+        {% set partes = t.split("-") %}
+        {% set ano_t = partes[0]|int %}
+        {% set tri_t = partes[1]|int %}
+
+        <a class="trimestre-link {% if ano_t == ano and tri_t == trimestre %}trimestre-ativo{% endif %}"
+           href="{{ url_for('caixa_trimestre', tri=t) }}">
+            {{ ano_t }} · T{{ tri_t }}
+        </a>
+    {% endfor %}
+</aside>
+
 
     <!-- 🔹 CONTEÚDO -->
     <main>
@@ -247,4 +251,5 @@ button {
 </div>
 
 {% endblock %}
+
 

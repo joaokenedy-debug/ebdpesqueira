@@ -591,9 +591,6 @@ def caixa():
         saldo_caixa=saldo_caixa,
         total_receber=total_receber
     )
-@app.route("/caixa/trimestre/<int:ano>/<int:trimestre>")
-@login_required
-
 
 @app.route("/caixa/trimestre")
 @login_required
@@ -777,6 +774,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

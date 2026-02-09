@@ -125,6 +125,13 @@ class Caixa(database.Model):
     valor = database.Column(database.Float, nullable=False)
     data = database.Column(database.DateTime, default=datetime.utcnow)
 
+    # 👇 CAMPO NOVO (opcional, só para pagamentos)
+    id_pedido = database.Column(
+        database.Integer,
+        database.ForeignKey("pedido.id"),
+        nullable=True
+    )
+
 
 # =========================
 # PAGAMENTO
@@ -148,3 +155,4 @@ class Pagamento(database.Model):
     data = database.Column(database.DateTime, default=datetime.utcnow)
 
     pedido = database.relationship("Pedido", back_populates="pagamentos")
+

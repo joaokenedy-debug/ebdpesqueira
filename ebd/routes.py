@@ -1,5 +1,5 @@
 from flask import render_template, url_for, redirect, session, request,  send_file, flash,send_from_directory
-from ebd import app, database, bcrypt, db
+from ebd import app, database, bcrypt
 from ebd.models import Usuario, Pedido, ItemPedido, Caixa, Pagamento
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha, FormRedefinirSenha
@@ -400,6 +400,7 @@ def meus_pedidos():
     return render_template("meus_pedidos.html", pedidos=pedidos)
 
 
+
 @app.route("/exportar_pedidos_excel")
 @login_required
 def exportar_pedidos_excel():
@@ -408,7 +409,7 @@ def exportar_pedidos_excel():
 
     trimestre = request.args.get("trimestre", type=int)
 
-    query = db.session.query(
+    query = database.session.query(
         Produto.nome,
         func.coalesce(func.sum(ItemPedido.quantidade), 0).label("total_vendido")
     ).outerjoin(
@@ -417,6 +418,7 @@ def exportar_pedidos_excel():
         Pedido, ItemPedido.pedido_id == Pedido.id
     )
 
+    # 🔎 FILTRO POR TRIMESTRE
     if trimestre:
         if trimestre == 1:
             query = query.filter(extract('month', Pedido.data).between(1, 3))
@@ -427,14 +429,14 @@ def exportar_pedidos_excel():
         elif trimestre == 4:
             query = query.filter(extract('month', Pedido.data).between(10, 12))
 
-    query = query.group_by(Produto.nome)
+    query = query.group_by(Produto.nome).order_by(Produto.nome)
 
     resultados = query.all()
 
-    # Criar Excel
+    # 📊 Criar Excel
     wb = Workbook()
     ws = wb.active
-    ws.title = "Relatório Trimestre"
+    ws.title = "Relatório"
 
     ws.append(["Produto", "Quantidade Vendida"])
 
@@ -451,6 +453,7 @@ def exportar_pedidos_excel():
         download_name="relatorio_trimestre.xlsx",
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
 
 
 
@@ -883,6 +886,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

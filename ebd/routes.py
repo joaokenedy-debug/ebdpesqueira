@@ -248,70 +248,19 @@ def adm (id_usuario):
 
 
 
-@app.route("/exportar_pedidos_excel")
+@app.route("/todos_pedidos")
 @login_required
-def exportar_pedidos_excel():
+def todos_pedidos():
     if not current_user.is_admin:
         return "Acesso negado", 403
 
-    trimestre = request.args.get("trimestre", type=int)
+    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
 
-    # 🔹 Subquery para pegar TODOS os produtos já existentes
-    subquery_produtos = database.session.query(
-        ItemPedido.produto
-    ).distinct().subquery()
+    # Ajusta para horário de Brasília
+    for pedido in pedidos:
+        pedido.data = pedido.data - timedelta(hours=3)
 
-    # 🔹 Query principal
-    query = database.session.query(
-        subquery_produtos.c.produto,
-        func.coalesce(func.sum(ItemPedido.quantidade), 0).label("total_vendido")
-    ).outerjoin(
-        ItemPedido,
-        ItemPedido.produto == subquery_produtos.c.produto
-    ).outerjoin(
-        Pedido,
-        ItemPedido.id_pedido == Pedido.id
-    )
-
-    # 🔎 FILTRO POR TRIMESTRE
-    if trimestre:
-        if trimestre == 1:
-            query = query.filter(extract('month', Pedido.data).between(1, 3))
-        elif trimestre == 2:
-            query = query.filter(extract('month', Pedido.data).between(4, 6))
-        elif trimestre == 3:
-            query = query.filter(extract('month', Pedido.data).between(7, 9))
-        elif trimestre == 4:
-            query = query.filter(extract('month', Pedido.data).between(10, 12))
-
-    query = query.group_by(subquery_produtos.c.produto).order_by(subquery_produtos.c.produto)
-
-    resultados = query.all()
-
-    # 📊 Criar Excel
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Relatório"
-
-    ws.append(["Produto", "Quantidade Vendida"])
-
-    for nome, total in resultados:
-        ws.append([nome, total])
-
-    arquivo = io.BytesIO()
-    wb.save(arquivo)
-    arquivo.seek(0)
-
-    nome_arquivo = "relatorio_trimestre.xlsx"
-    if trimestre:
-        nome_arquivo = f"relatorio_trimestre_{trimestre}.xlsx"
-
-    return send_file(
-        arquivo,
-        as_attachment=True,
-        download_name=nome_arquivo,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    return render_template("todos_pedidos.html", pedidos=pedidos)
 
 @app.route("/gerenciar_pedidos")
 @login_required
@@ -437,61 +386,6 @@ def download_pdf(subpasta, filename):
 def meus_pedidos():
     pedidos = Pedido.query.filter_by(id_usuario=current_user.id).order_by(Pedido.data.desc()).all()
     return render_template("meus_pedidos.html", pedidos=pedidos)
-
-
-
-@app.route("/exportar_pedidos_excel")
-@login_required
-def exportar_pedidos_excel():
-    if not current_user.is_admin:
-        return "Acesso negado", 403
-
-    trimestre = request.args.get("trimestre", type=int)
-
-    query = database.session.query(
-        Produto.nome,
-        func.coalesce(func.sum(ItemPedido.quantidade), 0).label("total_vendido")
-    ).outerjoin(
-        ItemPedido, Produto.id == ItemPedido.produto_id
-    ).outerjoin(
-        Pedido, ItemPedido.pedido_id == Pedido.id
-    )
-
-    # 🔎 FILTRO POR TRIMESTRE
-    if trimestre:
-        if trimestre == 1:
-            query = query.filter(extract('month', Pedido.data).between(1, 3))
-        elif trimestre == 2:
-            query = query.filter(extract('month', Pedido.data).between(4, 6))
-        elif trimestre == 3:
-            query = query.filter(extract('month', Pedido.data).between(7, 9))
-        elif trimestre == 4:
-            query = query.filter(extract('month', Pedido.data).between(10, 12))
-
-    query = query.group_by(Produto.nome).order_by(Produto.nome)
-
-    resultados = query.all()
-
-    # 📊 Criar Excel
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Relatório"
-
-    ws.append(["Produto", "Quantidade Vendida"])
-
-    for nome, total in resultados:
-        ws.append([nome, total])
-
-    arquivo = io.BytesIO()
-    wb.save(arquivo)
-    arquivo.seek(0)
-
-    return send_file(
-        arquivo,
-        as_attachment=True,
-        download_name="relatorio_trimestre.xlsx",
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
 
 
 
@@ -925,6 +819,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

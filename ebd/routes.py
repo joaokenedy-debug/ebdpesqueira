@@ -403,33 +403,33 @@ def meus_pedidos():
 @app.route("/exportar_pedidos_excel")
 @login_required
 def exportar_pedidos_excel():
-    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
+    if not current_user.is_admin:
+        return "Acesso negado", 403
 
-    dados = []
-    for pedido in pedidos:
-        for item in pedido.itens:
-            dados.append({
-                "Código": item.codigo,
-                "Produto": item.produto,
-                "Quantidade": item.quantidade,
-                "Preço Unitário": item.preco_unitario,
-                "Subtotal": item.subtotal,
-            })
+    trimestre = request.args.get("trimestre", type=int)
 
-    df = pd.DataFrame(dados)
+    query = db.session.query(
+        Produto.nome,
+        func.coalesce(func.sum(ItemPedido.quantidade), 0).label("total_vendido")
+    ).outerjoin(
+        ItemPedido, Produto.id == ItemPedido.produto_id
+    ).outerjoin(
+        Pedido, ItemPedido.pedido_id == Pedido.id
+    )
 
-    # Agrupar apenas pelo Código do produto
-    df_agrupado = df.groupby(['Código', 'Produto'], as_index=False).agg({
-        'Quantidade': 'sum',
-        'Subtotal': 'sum',
-        'Preço Unitário': 'first'
-    })
+    if trimestre:
+        if trimestre == 1:
+            query = query.filter(extract('month', Pedido.data).between(1, 3))
+        elif trimestre == 2:
+            query = query.filter(extract('month', Pedido.data).between(4, 6))
+        elif trimestre == 3:
+            query = query.filter(extract('month', Pedido.data).between(7, 9))
+        elif trimestre == 4:
+            query = query.filter(extract('month', Pedido.data).between(10, 12))
 
-    output = BytesIO()
-    df_agrupado.to_excel(output, index=False)
-    output.seek(0)
+    query = query.group_by(Produto.nome)
 
-    return send_file(output, as_attachment=True, download_name="todos_pedidos.xlsx")
+    resultados = query.all()
 
 
 
@@ -862,6 +862,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

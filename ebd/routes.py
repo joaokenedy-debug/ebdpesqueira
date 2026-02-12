@@ -13,7 +13,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from sqlalchemy import func, or_, and_
+from sqlalchemy import func, or_, and_, extract
 
 
 
@@ -254,9 +254,22 @@ def todos_pedidos():
     if not current_user.is_admin:
         return "Acesso negado", 403
 
-    pedidos = Pedido.query.order_by(Pedido.data.desc()).all()
+    trimestre = request.args.get("trimestre", type=int)
 
-    # Ajusta para horário de Brasília
+    query = Pedido.query
+
+    if trimestre:
+        if trimestre == 1:
+            query = query.filter(extract('month', Pedido.data).between(1, 3))
+        elif trimestre == 2:
+            query = query.filter(extract('month', Pedido.data).between(4, 6))
+        elif trimestre == 3:
+            query = query.filter(extract('month', Pedido.data).between(7, 9))
+        elif trimestre == 4:
+            query = query.filter(extract('month', Pedido.data).between(10, 12))
+
+    pedidos = query.order_by(Pedido.data.desc()).all()
+
     for pedido in pedidos:
         pedido.data = pedido.data - timedelta(hours=3)
 
@@ -849,6 +862,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

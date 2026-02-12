@@ -71,9 +71,11 @@
 
 <!-- Botão Exportar Excel -->
 <div class="top-actions">
-    <a class="btn" href="{{ url_for('exportar_pedidos_excel') }}">
-        📊 Exportar para Excel
+    <a class="btn"
+   href="{{ url_for('exportar_pedidos_excel', trimestre=trimestre_atual) }}">
+   📊 Exportar para Excel
     </a>
+
 </div>
 
 <table>
@@ -113,6 +115,7 @@
 
 </body>
 </html>
+
 
 
 

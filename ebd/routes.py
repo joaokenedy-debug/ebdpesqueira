@@ -1,5 +1,5 @@
 from flask import render_template, url_for, redirect, session, request,  send_file, flash,send_from_directory
-from ebd import app, database, bcrypt
+from ebd import app, database, bcrypt, db
 from ebd.models import Usuario, Pedido, ItemPedido, Caixa, Pagamento
 from flask_login import login_required,login_user, logout_user, current_user
 from ebd.forms import FormLogin, FormCriarConta, FormRecuperarSenha, FormRedefinirSenha
@@ -14,7 +14,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from sqlalchemy import func, or_, and_, extract
-
+from openpyxl import Workbook
 
 
 
@@ -883,6 +883,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

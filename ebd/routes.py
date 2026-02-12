@@ -409,7 +409,7 @@ def exportar_pedidos_excel():
     for nome, total in resultados:
         ws.append([nome, total])
 
-    arquivo = io.BytesIO()
+    arquivo = BytesIO()
     wb.save(arquivo)
     arquivo.seek(0)
 
@@ -903,6 +903,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

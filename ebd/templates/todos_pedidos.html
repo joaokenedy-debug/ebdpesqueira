@@ -60,6 +60,14 @@
             </h3>
       </nav>
 <h1>Todos os Pedidos</h1>
+<div style="text-align:center; margin-bottom:20px;">
+    <a class="btn" href="{{ url_for('todos_pedidos') }}">Todos</a>
+    <a class="btn" href="{{ url_for('todos_pedidos', trimestre=1) }}">1º Trimestre</a>
+    <a class="btn" href="{{ url_for('todos_pedidos', trimestre=2) }}">2º Trimestre</a>
+    <a class="btn" href="{{ url_for('todos_pedidos', trimestre=3) }}">3º Trimestre</a>
+    <a class="btn" href="{{ url_for('todos_pedidos', trimestre=4) }}">4º Trimestre</a>
+</div>
+
 
 <!-- Botão Exportar Excel -->
 <div class="top-actions">
@@ -105,5 +113,6 @@
 
 </body>
 </html>
+
 
 

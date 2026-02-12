@@ -248,16 +248,32 @@ def adm (id_usuario):
 
 
 
-@app.route("/todos_pedidos")
+@app.route("/exportar_pedidos_excel")
 @login_required
-def todos_pedidos():
+def exportar_pedidos_excel():
     if not current_user.is_admin:
         return "Acesso negado", 403
 
     trimestre = request.args.get("trimestre", type=int)
 
-    query = Pedido.query
+    # 🔹 Subquery para pegar TODOS os produtos já existentes
+    subquery_produtos = database.session.query(
+        ItemPedido.produto
+    ).distinct().subquery()
 
+    # 🔹 Query principal
+    query = database.session.query(
+        subquery_produtos.c.produto,
+        func.coalesce(func.sum(ItemPedido.quantidade), 0).label("total_vendido")
+    ).outerjoin(
+        ItemPedido,
+        ItemPedido.produto == subquery_produtos.c.produto
+    ).outerjoin(
+        Pedido,
+        ItemPedido.id_pedido == Pedido.id
+    )
+
+    # 🔎 FILTRO POR TRIMESTRE
     if trimestre:
         if trimestre == 1:
             query = query.filter(extract('month', Pedido.data).between(1, 3))
@@ -268,12 +284,35 @@ def todos_pedidos():
         elif trimestre == 4:
             query = query.filter(extract('month', Pedido.data).between(10, 12))
 
-    pedidos = query.order_by(Pedido.data.desc()).all()
+    query = query.group_by(subquery_produtos.c.produto).order_by(subquery_produtos.c.produto)
 
-    for pedido in pedidos:
-        pedido.data = pedido.data - timedelta(hours=3)
+    resultados = query.all()
 
-    return render_template("todos_pedidos.html", pedidos=pedidos)
+    # 📊 Criar Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Relatório"
+
+    ws.append(["Produto", "Quantidade Vendida"])
+
+    for nome, total in resultados:
+        ws.append([nome, total])
+
+    arquivo = io.BytesIO()
+    wb.save(arquivo)
+    arquivo.seek(0)
+
+    nome_arquivo = "relatorio_trimestre.xlsx"
+    if trimestre:
+        nome_arquivo = f"relatorio_trimestre_{trimestre}.xlsx"
+
+    return send_file(
+        arquivo,
+        as_attachment=True,
+        download_name=nome_arquivo,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
 @app.route("/gerenciar_pedidos")
 @login_required
 def gerenciar_pedidos():
@@ -886,6 +925,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

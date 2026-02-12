@@ -431,6 +431,27 @@ def exportar_pedidos_excel():
 
     resultados = query.all()
 
+    # Criar Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Relatório Trimestre"
+
+    ws.append(["Produto", "Quantidade Vendida"])
+
+    for nome, total in resultados:
+        ws.append([nome, total])
+
+    arquivo = io.BytesIO()
+    wb.save(arquivo)
+    arquivo.seek(0)
+
+    return send_file(
+        arquivo,
+        as_attachment=True,
+        download_name="relatorio_trimestre.xlsx",
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
 
 
 
@@ -862,6 +883,7 @@ def injetar_stats():
 
 
 from datetime import date
+
 
 
 

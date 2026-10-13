@@ -654,14 +654,20 @@ def caixa_trimestre():
     if not current_user.is_admin:
         return "Acesso negado", 403
 
-    # 🔹 Buscar trimestres existentes a partir dos pedidos
+     # 🔹 Buscar trimestres existentes a partir dos pedidos
+    ano_expr = extract('year', Pedido.data).label('ano')
+    trimestre_expr = func.ceil(
+        extract('month', Pedido.data) / 3
+    ).label('trimestre')
+
     resultados = database.session.query(
-        func.extract('year', Pedido.data).label('ano'),
-        func.ceil(func.extract('month', Pedido.data) / 3).label('trimestre')
+        ano_expr,
+        trimestre_expr
     ).distinct().order_by(
-        func.extract('year', Pedido.data).desc(),
-        func.ceil(func.extract('month', Pedido.data) / 3).desc()
+        ano_expr.desc(),
+        trimestre_expr.desc()
     ).all()
+
 
     trimestres_disponiveis = [
         f"{int(r.ano)}-{int(r.trimestre)}" for r in resultados
